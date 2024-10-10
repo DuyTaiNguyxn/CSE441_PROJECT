@@ -14,6 +14,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.duytai.cse441_project.fragment.BookTableFragment;
+import com.duytai.cse441_project.fragment.CartFragment;
+import com.duytai.cse441_project.fragment.CategoryFragment;
+import com.duytai.cse441_project.fragment.HomeFragment;
+import com.duytai.cse441_project.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
@@ -45,13 +50,13 @@ public class HomeActivity extends AppCompatActivity {
                 if (Itemid == R.id.nav_bottom_home) {
                     loadFragment(new HomeFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_directory) {
-                    loadFragment(new DetailProductFragment(), false);
+                    loadFragment(new CategoryFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_map) {
-                    loadFragment(new BookTableFagment(), false);
+                    loadFragment(new BookTableFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_cart) {
-                    loadFragment(new CartFagment(), false);
+                    loadFragment(new CartFragment(), false);
                 } else {
-                    loadFragment(new ProfileFagment(), false);
+                    loadFragment(new ProfileFragment(), false);
                 }
                 return true;
             }
