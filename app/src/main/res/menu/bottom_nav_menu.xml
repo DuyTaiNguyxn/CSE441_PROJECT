@@ -3,27 +3,37 @@
     <item
         android:id="@+id/nav_bottom_home"
         android:icon="@drawable/baseline_home_24"
+        android:layout_gravity="center"
         android:title="Trang chủ"
-       />
+    />
 
 
     <item
         android:id="@+id/nav_bottom_directory"
         android:icon="@drawable/baseline_grid_view_24"
-        android:title="Danh mục"/>
+        android:layout_gravity="center"
+        android:title="Danh mục"
+        />
+
 
     <item
         android:id="@+id/nav_bottom_map"
         android:icon="@drawable/baseline_table_bar_24"
-        android:title="Đặt bàn"/>
+        android:layout_gravity="center"
+        android:title="Đặt bàn"
+        />
 
     <item
         android:id="@+id/nav_bottom_cart"
         android:icon="@drawable/baseline_shopping_cart_24"
-        android:title="Giỏ hàng"/>
+        android:layout_gravity="center"
+        android:title="Giỏ hàng"
+        />
 
     <item
         android:id="@+id/nav_bottom_profile"
         android:icon="@drawable/baseline_account_circle_24"
-        android:title="Cá nhân"/>
+        android:title="Cá nhân"
+
+        />
 </menu>
