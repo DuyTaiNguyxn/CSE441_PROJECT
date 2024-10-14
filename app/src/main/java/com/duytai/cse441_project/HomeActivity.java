@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity {
     // Khai báo giao diện
     private FrameLayout frame_Main;
+    private FrameLayout fragmentContainerView;
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -33,13 +34,12 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         // Gán giao diện
-        frame_Main = findViewById(R.id.frame_Main);
+        fragmentContainerView = findViewById(R.id.fragmentContainerView);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView, (v, insets) -> {
+            // Tiêu thụ toàn bộ insets cho BottomNavigationView để tránh tác động lên các view khác
+            return WindowInsetsCompat.CONSUMED;
         });
 
         // Thiết lập sự kiện chọn item cho Bottom Navigation
@@ -72,11 +72,13 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (isAppInitialized) {
-            fragmentTransaction.add(R.id.frame_Main, fragment);
+            fragmentTransaction.add(R.id.fragmentContainerView, fragment);
         } else {
-            fragmentTransaction.replace(R.id.frame_Main, fragment);
+            fragmentTransaction.replace(R.id.fragmentContainerView, fragment);
         }
 
         fragmentTransaction.commit();
     }
+
+
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="155dp"
+    android:layout_height="190dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/cusstom_search_bar"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/cusstom_search_bar"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/image_product"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_search_24" />
+
+        <TextView
+            android:id="@+id/txt_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Đùi gà rán"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_product_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="70,000 VNĐ"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_buy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/app_color"
+            android:text="Mua"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
