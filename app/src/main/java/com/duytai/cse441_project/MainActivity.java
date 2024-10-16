@@ -18,10 +18,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import android.util.Log;
+import android.widget.ImageView;
+import com.squareup.picasso.Picasso;
+import androidx.annotation.NonNull;
+
 
 public class MainActivity extends AppCompatActivity {
     Button btn_login;
-    ImageView imageView;
+    ImageView logoview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btn_login = findViewById(R.id.btn_login);
+        logoview = findViewById(R.id.main_img_logo);
 
         // Lấy tên của food với foodId là 1 và gán cho btn_login
         getFoodNameAndSetButton();
@@ -51,27 +57,33 @@ public class MainActivity extends AppCompatActivity {
 
     // Test CSDL
     private void getFoodNameAndSetButton() {
-        // Khai báo đường dẫn đến Realtime Database
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Food");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Food");
 
-        // Lấy dữ liệu từ Realtime Database
-        databaseRef.child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+        // Lấy dữ liệu
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Kiểm tra xem dữ liệu có tồn tại hay không
-                if (dataSnapshot.exists()) {
-                    // Lấy tên của food với foodId là 1
-                    String foodName = dataSnapshot.child("foodName").getValue(String.class);
-                    // Gán tên thực phẩm vào text của btn_login
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Duyệt qua tất cả các sản phẩm trong danh sách
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Lấy thông tin của sản phẩm
+                    String foodName = snapshot.child("foodName").getValue(String.class);
+                    String imgURL = snapshot.child("imgURL").getValue(String.class);
+                    // Thiết lập văn bản cho Button
+
+
                     btn_login.setText(foodName);
-                } else {
-                    Toast.makeText(MainActivity.this, "Không tìm thấy thực phẩm với foodId = 1", Toast.LENGTH_SHORT).show();
+
+                    // Tải và thiết lập hình ảnh cho ImageView
+                    Picasso.get().load(imgURL).into(logoview);
+
+
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MainActivity.this, "Lỗi khi lấy dữ liệu: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi nếu có
+                Log.e("FirebaseError", databaseError.getMessage());
             }
         });
     }
