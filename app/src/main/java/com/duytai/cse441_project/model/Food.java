@@ -7,6 +7,7 @@ public class Food {
     private String category;
     private double price; // Đảm bảo kiểu dữ liệu là double
     private String imgURL;
+    private int quantitySold;
 
     // Constructor
     public Food() {}
@@ -58,5 +59,13 @@ public class Food {
 
     public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
+    }
+
+    public int getQuantitySold() {
+        return quantitySold;
+    }
+
+    public void setQuantitySold(int quantitySold) {
+        this.quantitySold = quantitySold;
     }
 }
