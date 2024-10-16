@@ -12,8 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_margin="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:background="@drawable/cusstom_search_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,20 +30,21 @@
             android:id="@+id/search_edit_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="0dp"
             android:background="@null"
             android:hint="Tìm kiếm"
             android:paddingEnd="30dp"
             android:textColorHint="#A49B9B"
-            android:textSize="18sp" />
-
+            android:textSize="20sp" />
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,21 +58,16 @@
             <TextView
                 android:id="@+id/txt_TopSale"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="Bán chạy"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerTopSale"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <include layout="@layout/item_product" />
-
-                <include layout="@layout/item_product" />
-            </LinearLayout>
+                android:padding="16dp"/>
 
             <TextView
                 android:id="@+id/txt_NewFood"
@@ -83,35 +77,27 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerNewFood"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <include layout="@layout/item_product" />
-
-                <include layout="@layout/item_product" />
-            </LinearLayout>
+                android:orientation="horizontal"
+                android:scrollbars="horizontal" />
 
             <TextView
                 android:id="@+id/txt_Combo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Combo"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCombo"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <include layout="@layout/item_product" />
-
-                <include layout="@layout/item_product" />
-            </LinearLayout>
-
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal" />
         </LinearLayout>
     </ScrollView>
 
