@@ -41,9 +41,10 @@ public class BookingFragment extends Fragment {
 
         // Khởi tạo danh sách cơ sở
         storeList = new ArrayList<>();
-        storeList.add(new Store("ChickenGang Hoàng Mai", 3, R.drawable.logo));
-        storeList.add(new Store("ChickenGang Cầu Giấy", 4, R.drawable.logo));
-        storeList.add(new Store("ChickenGang Tây Hồ", 2, R.drawable.logo));
+        storeList.add(new Store(1, "ChickenGang Hoàng Mai", "","","","7:00 - 22:00"));
+        storeList.add(new Store(2, "ChickenGang Cau Giay", "","","","7:00 - 22:00"));
+        storeList.add(new Store(3, "ChickenGang Tay Ho", "","","","7:00 - 22:00"));
+        storeList.add(new Store(4, "ChickenGang Long Bien", "","","","7:00 - 22:00"));
 
         // Thiết lập adapter cho RecyclerView
         StoreAdapter adapterStore = new StoreAdapter(getContext(), storeList, store -> {

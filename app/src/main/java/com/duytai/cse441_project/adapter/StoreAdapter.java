@@ -34,11 +34,12 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StoreAdapter.StoreViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StoreViewHolder holder, int position) {
         Store store = storeList.get(position);
-        holder.tvStoreName.setText(store.getName());
-        holder.tvTable.setText(String.valueOf(store.getTable()));
-        holder.imgStore.setImageResource(store.getImageResId());
+        holder.tvStoreName.setText(store.getStoreName());
+        holder.tvOpeningHours.setText(store.getOpeningHours());
+        //holder.tvTable.setText(String.valueOf());
+        holder.imgStore.setImageResource(R.drawable.logo);
 
         holder.btnBook.setOnClickListener(v -> listener.onBookClick(store));
     }
@@ -51,13 +52,14 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
 
     public static class StoreViewHolder extends RecyclerView.ViewHolder {
         ImageView imgStore;
-        TextView tvStoreName, tvTable;
+        TextView tvStoreName, tvTable, tvOpeningHours;
         Button btnBook;
 
         public StoreViewHolder(@NonNull View itemView) {
             super(itemView);
             imgStore = itemView.findViewById(R.id.imgStore);
             tvStoreName = itemView.findViewById(R.id.tvStoreName);
+            tvOpeningHours = itemView.findViewById(R.id.tv_opening_hours);
             tvTable = itemView.findViewById(R.id.tvTable);
             btnBook = itemView.findViewById(R.id.btnBook);
         }
