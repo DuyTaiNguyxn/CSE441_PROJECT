@@ -17,6 +17,7 @@ import com.duytai.cse441_project.model.Food;
 import java.util.List;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
+
     private List<Food> foodList;
     private Context context;
 
@@ -35,28 +36,39 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
         Food food = foodList.get(position);
-        holder.textFoodName.setText(food.getFoodName());
-        holder.textFoodPrice.setText(String.valueOf(food.getPrice()) + " VND");
+        holder.txtFoodName.setText(food.getFoodName());
+        holder.txtFoodPrice.setText(String.format("%.2f VNĐ", food.getPrice())); // Hiển thị giá với 2 chữ số thập phân
 
-        // Tải hình ảnh từ URL bằng Glide
-        Glide.with(context).load(food.getImgURL()).into(holder.imageFood);
+        // Sử dụng Glide để tải hình ảnh
+        Glide.with(context)
+                .load(food.getImgURL())
+                .into(holder.imgFood);
+
+        holder.btnBuy.setOnClickListener(v -> {
+            // Xử lý khi nhấn nút "Mua"
+        });
     }
-
     @Override
     public int getItemCount() {
         return foodList.size();
     }
 
+    public void updateFoodList(List<Food> newFoodList) {
+        this.foodList = newFoodList;
+        notifyDataSetChanged();
+    }
+
     public static class FoodViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageFood;
-        TextView textFoodName, textFoodPrice;
+        ImageView imgFood;
+        TextView txtFoodName, txtFoodPrice;
         Button btnBuy;
 
         public FoodViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageFood = itemView.findViewById(R.id.imgFood);
-            textFoodName = itemView.findViewById(R.id.txtFoodName);
-            textFoodPrice = itemView.findViewById(R.id.txtFoodPrice);
+            imgFood = itemView.findViewById(R.id.imgFood);
+            txtFoodName = itemView.findViewById(R.id.txtFoodName);
+            txtFoodPrice = itemView.findViewById(R.id.txtFoodPrice);
+            btnBuy = itemView.findViewById(R.id.btn_buy);
         }
     }
 }
