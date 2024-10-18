@@ -1,6 +1,5 @@
 package com.duytai.cse441_project.fragment;
 
-// HomeFragment.java
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,67 +84,89 @@ public class HomeFragment extends Fragment {
                     foodSalesMap.put(foodId, foodSalesMap.getOrDefault(foodId, 0) + quantity);
                 }
 
-                // Lấy dữ liệu món ăn
-                foodReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                // Lấy dữ liệu danh mục
+                DatabaseReference categoryReference = FirebaseDatabase.getInstance().getReference("Category");
+                categoryReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot foodSnapshot) {
-                        topSaleList.clear(); // Xóa dữ liệu cũ
-                        newFoodList.clear(); // Xóa danh sách món mới cũ
-                        comboList.clear(); // Xóa danh sách combo cũ
+                    public void onDataChange(@NonNull DataSnapshot categorySnapshot) {
+                        int comboCategoryId = -1;
 
-                        for (DataSnapshot food : foodSnapshot.getChildren()) {
-                            Food foodItem = food.getValue(Food.class);
-                            int totalQuantity = foodSalesMap.getOrDefault(foodItem.getFoodId(), 0);
-
-                            // Cập nhật số lượng bán cho món ăn
-                            if (totalQuantity > 0) {
-                                foodItem.setQuantitySold(totalQuantity); // Cập nhật số lượng bán
-                                topSaleList.add(foodItem); // Thêm vào danh sách món bán chạy
-                            }
-
-                            // Thêm vào danh sách món mới (10 món mới nhất)
-                            newFoodList.add(foodItem); // Thêm vào danh sách món mới
-
-                            // Kiểm tra danh mục để thêm vào danh sách combo
-                            if (foodItem.getCategory().equals("Combo")) {
-                                comboList.add(foodItem); // Thêm vào danh sách combo
+                        // Duyệt qua danh sách danh mục để tìm categoryId của "Combo"
+                        for (DataSnapshot category : categorySnapshot.getChildren()) {
+                            String categoryName = category.child("categoryName").getValue(String.class);
+                            if ("Combo".equals(categoryName)) {
+                                comboCategoryId = category.child("categoryId").getValue(Integer.class);
+                                break; // Đã tìm thấy, không cần tiếp tục
                             }
                         }
 
-                        // Nếu không có sản phẩm bán nào, lấy 10 sản phẩm đầu tiên từ Food
-                        if (topSaleList.isEmpty()) {
-                            for (int i = 0; i < Math.min(10, foodSnapshot.getChildrenCount()); i++) {
-                                Food foodItem = foodSnapshot.child(String.valueOf(i)).getValue(Food.class);
-                                topSaleList.add(foodItem); // Thêm món ăn mà không có số lượng
-                            }
-                        } else {
-                            // Sắp xếp danh sách theo số lượng bán từ cao xuống thấp
-                            Collections.sort(topSaleList, new Comparator<Food>() {
-                                @Override
-                                public int compare(Food o1, Food o2) {
-                                    return Integer.compare(o2.getQuantitySold(), o1.getQuantitySold()); // Sắp xếp theo số lượng bán
+                        // Lấy dữ liệu món ăn
+                        int finalComboCategoryId = comboCategoryId;
+                        foodReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot foodSnapshot) {
+                                topSaleList.clear(); // Xóa dữ liệu cũ
+                                newFoodList.clear(); // Xóa danh sách món mới cũ
+                                comboList.clear(); // Xóa danh sách combo cũ
+                                int TopSaleCount = 0;
+                                int newFoodCount = 0;
+                                int ComboCount = 0;
+
+                                for (DataSnapshot food : foodSnapshot.getChildren()) {
+                                    Food foodItem = food.getValue(Food.class);
+                                    int totalQuantity = foodSalesMap.getOrDefault(foodItem.getFoodId(), 0);
+
+                                    // Cập nhật số lượng bán cho món ăn
+                                    if (totalQuantity > 0 && TopSaleCount < 10) {
+                                        foodItem.setQuantitySold(totalQuantity);
+                                        TopSaleCount++;
+                                        topSaleList.add(foodItem);
+                                    }
+
+                                    if (newFoodCount < 10) { // Chỉ thêm tối đa 10 món mới
+                                        newFoodList.add(foodItem); // Thêm vào danh sách món mới
+                                        newFoodCount++; // Tăng biến đếm
+                                    }
+
+                                    // Kiểm tra danh mục (categoryId) để thêm vào danh sách combo
+                                    if (foodItem.getCategoryId() == finalComboCategoryId && ComboCount < 10) {
+                                        ComboCount++;
+                                        comboList.add(foodItem);// Thêm vào danh sách combo
+                                    }
                                 }
-                            });
 
-                            // Giới hạn danh sách chỉ còn 10 sản phẩm
-                            if (topSaleList.size() > 10) {
-                                topSaleList = topSaleList.subList(0, 10);
+                                // Nếu không có sản phẩm bán nào, lấy 10 sản phẩm đầu tiên từ Food
+                                if (topSaleList.isEmpty()) {
+                                    for (int i = 0; i < Math.min(10, foodSnapshot.getChildrenCount()); i++) {
+                                        Food foodItem = foodSnapshot.child(String.valueOf(i)).getValue(Food.class);
+                                        topSaleList.add(foodItem); // Thêm món ăn mà không có số lượng
+                                    }
+                                } else {
+                                    // Sắp xếp danh sách theo số lượng bán từ cao xuống thấp
+                                    Collections.sort(topSaleList, new Comparator<Food>() {
+                                        @Override
+                                        public int compare(Food o1, Food o2) {
+                                            return Integer.compare(o2.getQuantitySold(), o1.getQuantitySold()); // Sắp xếp theo số lượng bán
+                                        }
+                                    });
+
+                                }
+
+                                topSaleAdapter.notifyDataSetChanged(); // Cập nhật adapter bán chạy
+                                newFoodAdapter.notifyDataSetChanged(); // Cập nhật adapter món mới
+                                comboAdapter.notifyDataSetChanged(); // Cập nhật adapter combo
                             }
-                        }
 
-                        // Giới hạn danh sách món mới chỉ còn 10 sản phẩm
-                        if (newFoodList.size() > 10) {
-                            newFoodList = newFoodList.subList(0, 10);
-                        }
-
-                        topSaleAdapter.notifyDataSetChanged(); // Cập nhật adapter bán chạy
-                        newFoodAdapter.notifyDataSetChanged(); // Cập nhật adapter món mới
-                        comboAdapter.notifyDataSetChanged(); // Cập nhật adapter combo
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.e("HomeFragment", "Error fetching food data", databaseError.toException());
+                            }
+                        });
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("HomeFragment", "Error fetching food data", databaseError.toException());
+                        Log.e("HomeFragment", "Error fetching category data", databaseError.toException());
                     }
                 });
             }
