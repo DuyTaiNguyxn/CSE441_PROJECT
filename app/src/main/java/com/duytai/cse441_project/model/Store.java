@@ -9,6 +9,8 @@ public class Store {
     private String openingHours;
     private String imgURL; // Thêm thuộc tính imgUrl
 
+    private transient int availableTables;
+
     // Constructor không tham số
     public Store() {
     }
@@ -81,5 +83,13 @@ public class Store {
 
     public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
+    }
+
+    public int getAvailableTables() {
+        return availableTables;
+    }
+
+    public void setAvailableTables(int availableTables) {
+        this.availableTables = availableTables;
     }
 }
