@@ -1,6 +1,7 @@
 package com.duytai.cse441_project.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,21 +10,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.model.Store;
-
 import java.util.List;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder> {
 
-    private Context context;
     private List<Store> storeList;
-    private OnLocationClickListener listener;
+    private Context context;
 
-    public StoreAdapter(Context context, List<Store> storeList, OnLocationClickListener listener) {
+    public StoreAdapter(Context context, List<Store> storeList) {
         this.context = context;
         this.storeList = storeList;
-        this.listener = listener;
     }
 
     @NonNull
@@ -36,12 +35,23 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     @Override
     public void onBindViewHolder(@NonNull StoreViewHolder holder, int position) {
         Store store = storeList.get(position);
-        holder.tvStoreName.setText(store.getStoreName());
-        holder.tvOpeningHours.setText(store.getOpeningHours());
-        //holder.tvTable.setText(String.valueOf());
-        holder.imgStore.setImageResource(R.drawable.logo);
 
-        holder.btnBook.setOnClickListener(v -> listener.onBookClick(store));
+        if (store == null) return;  // Kiểm tra dữ liệu hợp lệ
+
+        holder.txtStoreName.setText(store.getStoreName());
+        holder.txtOpeningHours.setText(store.getOpeningHours());
+
+        // Sử dụng Glide để tải ảnh của cửa hàng
+        Glide.with(context)
+                .load(store.getImgURL())
+                .placeholder(R.drawable.logo) // Ảnh chờ trong lúc tải
+                .error(R.drawable.logo) // Ảnh lỗi nếu tải không thành công
+                .into(holder.imgStore);
+
+        holder.btnBook.setOnClickListener(v -> {
+            // Xử lý khi nhấn nút "Đặt bàn"
+            Log.d("StoreAdapter", "Đã nhấn nút đặt bàn cho cửa hàng: " + store.getStoreName());
+        });
     }
 
 
@@ -52,20 +62,15 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
 
     public static class StoreViewHolder extends RecyclerView.ViewHolder {
         ImageView imgStore;
-        TextView tvStoreName, tvTable, tvOpeningHours;
+        TextView txtStoreName, txtOpeningHours;
         Button btnBook;
 
         public StoreViewHolder(@NonNull View itemView) {
             super(itemView);
             imgStore = itemView.findViewById(R.id.imgStore);
-            tvStoreName = itemView.findViewById(R.id.tvStoreName);
-            tvOpeningHours = itemView.findViewById(R.id.tv_opening_hours);
-            tvTable = itemView.findViewById(R.id.tvTable);
+            txtStoreName = itemView.findViewById(R.id.tvStoreName);
+            txtOpeningHours = itemView.findViewById(R.id.tv_opening_hours);
             btnBook = itemView.findViewById(R.id.btnBook);
         }
-    }
-
-    public interface OnLocationClickListener {
-        void onBookClick(Store store);
     }
 }

@@ -7,6 +7,7 @@ public class Store {
     private String locationLink;
     private String phone;
     private String openingHours;
+    private String imgURL; // Thêm thuộc tính imgUrl
 
     // Constructor không tham số
     public Store() {
@@ -14,13 +15,15 @@ public class Store {
 
     // Constructor đầy đủ tham số
     public Store(int storeId, String storeName, String location,
-                 String locationLink, String phone, String openingHours) {
+                 String locationLink, String phone,
+                 String openingHours, String imgUrl) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.location = location;
         this.locationLink = locationLink;
         this.phone = phone;
         this.openingHours = openingHours;
+        this.imgURL = imgUrl;
     }
 
     // Getter và Setter cho các thuộc tính
@@ -72,5 +75,11 @@ public class Store {
         this.openingHours = openingHours;
     }
 
-}
+    public String getImgURL() {
+        return imgURL;
+    }
 
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
+    }
+}
