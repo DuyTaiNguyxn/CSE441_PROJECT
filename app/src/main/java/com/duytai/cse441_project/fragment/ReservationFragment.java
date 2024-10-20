@@ -14,19 +14,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.duytai.cse441_project.R;
+import com.duytai.cse441_project.adapter.CategoryAdapter;
+import com.duytai.cse441_project.adapter.ReservationAdapter;
 import com.duytai.cse441_project.model.Store;
 import com.duytai.cse441_project.model.TableInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ReservationFragment extends Fragment {
 
-    TextView tvStoreName, tvStoreLocation, tvSelectedDate, tvSelectedTime, tvDatePicker, tvTimePicker;
-    EditText edtUserName, edtUserPhone;
-    Button btnSubmit;
+    private TextView tvStoreName, tvStoreLocation, tvSelectedDate, tvSelectedTime, tvDatePicker, tvTimePicker;
+    private RecyclerView rcvTable;
+    private EditText edtNote;
+    private Button btnSubmit;
+
+    private ReservationAdapter reservationAdapter;
+    private int selectedTableId;
 
     @Nullable
     @Override
@@ -39,20 +48,24 @@ public class ReservationFragment extends Fragment {
         tvStoreLocation = view.findViewById(R.id.tv_store_location);
         tvSelectedDate = view.findViewById(R.id.tv_selected_date);
         tvSelectedTime = view.findViewById(R.id.tv_selected_time);
-        edtUserName = view.findViewById(R.id.edt_user_name);
-        edtUserPhone = view.findViewById(R.id.edt_user_phone);
         tvDatePicker = view.findViewById(R.id.btn_date_picker);
         tvTimePicker = view.findViewById(R.id.btn_time_picker);
+        edtNote = view.findViewById(R.id.edt_note);
         btnSubmit = view.findViewById(R.id.btn_submit);
 
-        Store storeData = null;
-        ArrayList<TableInfo> availableTabelList;
+        rcvTable = view.findViewById(R.id.rcv_table);
+        LinearLayoutManager tableLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rcvTable.setLayoutManager(tableLayoutManager);
 
+        Store storeData = null;
+        ArrayList<TableInfo> availableTableList = null;
         // Nhận dữ liệu từ bundle
         if (getArguments() != null) {
             storeData = (Store) getArguments().getSerializable("storeData");
-            availableTabelList = (ArrayList<TableInfo>) getArguments().getSerializable("availableTableData");
+            availableTableList = (ArrayList<TableInfo>) getArguments().getSerializable("availableTableData");
         }
+        reservationAdapter = new ReservationAdapter(getContext(), availableTableList, this);
+        rcvTable.setAdapter(reservationAdapter);
 
         tvStoreName.setText(storeData.getStoreName());
         tvDatePicker.setOnClickListener(v -> showDatePickerDialog());
@@ -85,5 +98,9 @@ public class ReservationFragment extends Fragment {
             tvSelectedTime.setText(selectedTime);
         }, hour, minute, true);
         timePickerDialog.show();
+    }
+
+    public void selectedTable(int tableId){
+        selectedTableId = tableId;
     }
 }
