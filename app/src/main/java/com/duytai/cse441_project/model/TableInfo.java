@@ -1,12 +1,17 @@
 package com.duytai.cse441_project.model;
 
-public class TableInfo {
+import java.io.Serializable;
+
+public class TableInfo implements Serializable {
     private int tableId;
     private int storeId;
     private int seats;
     private String status;
 
     // Constructor
+    public TableInfo() {
+    }
+
     public TableInfo(int tableId, int storeId, int seats, String status) {
         this.tableId = tableId;
         this.storeId = storeId;

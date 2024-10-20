@@ -1,21 +1,22 @@
 package com.duytai.cse441_project.model;
 
-public class Store {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Store implements Serializable {
     private int storeId;
     private String storeName;
     private String location;
     private String locationLink;
     private String phone;
     private String openingHours;
-    private String imgURL; // Thêm thuộc tính imgUrl
+    private String imgURL;
+    private ArrayList<TableInfo> availableTableInfoList;
 
-    private transient int availableTables;
-
-    // Constructor không tham số
+    // Constructor
     public Store() {
     }
 
-    // Constructor đầy đủ tham số
     public Store(int storeId, String storeName, String location,
                  String locationLink, String phone,
                  String openingHours, String imgUrl) {
@@ -86,10 +87,14 @@ public class Store {
     }
 
     public int getAvailableTables() {
-        return availableTables;
+        return availableTableInfoList.size();
     }
 
-    public void setAvailableTables(int availableTables) {
-        this.availableTables = availableTables;
+    public ArrayList<TableInfo> getAvailableTableInfoList() {
+        return availableTableInfoList;
+    }
+
+    public void setAvailableTableInfoList(ArrayList<TableInfo> availableTableInfoList) {
+        this.availableTableInfoList = availableTableInfoList;
     }
 }
