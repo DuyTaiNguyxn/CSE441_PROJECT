@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "291849260636",
+    "project_id": "chickengangapp",
+    "storage_bucket": "chickengangapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291849260636:android:0eca56d15b8e884bbfa099",
+        "android_client_info": {
+          "package_name": "com.duytai.cse441_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjPJSBcX3jBWGvlTqjGehqsmXs9Sb7Qys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
