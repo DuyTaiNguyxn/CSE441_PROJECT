@@ -3,4 +3,8 @@
     <color name="black">#151515</color>
     <color name="white">#FFFFFF</color>
     <color name="app_color">#FED718</color>
+    <color name="selected_background">#FED718</color>
+    <color name="selected_text_color">#151515</color>
+    <color name="default_background">#FFFFFF</color>
+    <color name="default_text_color">#151515</color>
 </resources>
