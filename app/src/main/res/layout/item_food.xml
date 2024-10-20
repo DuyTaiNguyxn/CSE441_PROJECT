@@ -5,7 +5,8 @@
     android:layout_height="190dp"
     android:layout_margin="10dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:contentPadding="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,34 +27,36 @@
             android:id="@+id/txtFoodName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center"
             android:layerType="software"
-            android:padding="8dp"
+            android:maxLines="1"
+            android:padding="5dp"
             android:text="Đùi gà rán"
             android:textSize="12sp"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtFoodPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center"
-            android:padding="8dp"
-            android:text="70,000 VNĐ"
-            android:textSize="12sp"
             android:maxLines="1"
-            android:ellipsize="end"/>
+            android:padding="5dp"
+            android:text="70,000 VNĐ"
+            android:textSize="12sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_buy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:backgroundTint="@color/app_color"
+            android:foreground="?attr/selectableItemBackground"
             android:text="Mua"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/black"
+            app:cornerRadius="5dp" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
