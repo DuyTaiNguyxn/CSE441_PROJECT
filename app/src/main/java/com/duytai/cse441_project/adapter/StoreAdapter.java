@@ -1,8 +1,6 @@
 package com.duytai.cse441_project.adapter;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.model.Store;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder> {
 
