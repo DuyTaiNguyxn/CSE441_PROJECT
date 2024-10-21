@@ -36,7 +36,6 @@ public class StoreFragment extends Fragment {
     private ArrayList<Store> storeList = new ArrayList<>();
     private Map<Integer, ArrayList<TableInfo>> availableTablesMap = new HashMap<>();
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -75,6 +74,7 @@ public class StoreFragment extends Fragment {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         fetchStoreData();
+
         return view;
     }
 

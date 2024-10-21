@@ -1,5 +1,6 @@
 package com.duytai.cse441_project.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,9 +52,24 @@ public class ReservationFragment extends Fragment {
         reservationAdapter = new ReservationAdapter(reservationList, new ReservationAdapter.OnCancelButtonClickListener() {
             @Override
             public void onCancelButtonClick(Reservation reservation) {
-                Toast.makeText(getContext(), "Đã huỷ bàn!", Toast.LENGTH_SHORT).show();
+                // Hiển thị dialog xác nhận trước khi huỷ
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Xác nhận huỷ")
+                        .setMessage("Bạn có chắc chắn muốn huỷ bàn này không?")
+                        .setCancelable(false)  // Không cho phép đóng khi nhấn ra ngoài
+                        .setPositiveButton("Có", (dialog, which) -> {
+                            // Thực hiện huỷ bàn ở đây
+                            deleteReservationAndUpdateTableInfo(reservation);
+                            Toast.makeText(getContext(), "Đã huỷ bàn!", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Không", (dialog, which) -> {
+                            // Đóng dialog nếu chọn "Không"
+                            dialog.dismiss();
+                        })
+                        .show();
             }
         });
+
         rcvReservation.setAdapter(reservationAdapter);
 
         userId = 0; // Hoặc gán userId phù hợp nếu cần
@@ -70,45 +86,7 @@ public class ReservationFragment extends Fragment {
                     if (reservationSnapshot.exists() && reservationSnapshot.getValue() != null) {
                         Reservation reservationItem = reservationSnapshot.getValue(Reservation.class);
                         if (reservationItem != null && reservationItem.getUserId() == userId) {
-                            int tableInfoId = reservationItem.getTableInfoId();
-                            tableInfoReference.child(String.valueOf(tableInfoId)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot tableInfoSnapshot) {
-                                    if (tableInfoSnapshot.exists()) {
-                                        TableInfo tableInfo = tableInfoSnapshot.getValue(TableInfo.class);
-                                        if (tableInfo != null) {
-                                            int storeId = tableInfo.getStoreId();
-                                            storeReference.child(String.valueOf(storeId)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot storeSnapshot) {
-                                                    if (storeSnapshot.exists()) {
-                                                        Store store = storeSnapshot.getValue(Store.class);
-                                                        if (store != null) {
-                                                            // Cập nhật thông tin vào reservationItem
-                                                            reservationItem.setStoreName(store.getStoreName());
-                                                            reservationItem.setStorePhone(store.getPhone());
-                                                            reservationItem.setTableSeats(tableInfo.getSeats());
-
-                                                            reservationList.add(reservationItem); // Thêm mục vào danh sách
-                                                            reservationAdapter.notifyDataSetChanged(); // Cập nhật Adapter
-                                                        }
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                    Log.e("StoreInfo", "Error fetching store data", databaseError.toException());
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e("TableInfo", "Error fetching table info", databaseError.toException());
-                                }
-                            });
+                            fetchTableInfo(reservationItem);
                         }
                     }
                 }
@@ -122,5 +100,79 @@ public class ReservationFragment extends Fragment {
 
         return view;
     }
+
+    private void fetchTableInfo(Reservation reservationItem) {
+        int tableInfoId = reservationItem.getTableInfoId();
+        tableInfoReference.child(String.valueOf(tableInfoId)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot tableInfoSnapshot) {
+                if (tableInfoSnapshot.exists()) {
+                    TableInfo tableInfo = tableInfoSnapshot.getValue(TableInfo.class);
+                    if (tableInfo != null) {
+                        fetchStoreInfo(reservationItem, tableInfo);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("TableInfo", "Error fetching table info", databaseError.toException());
+            }
+        });
+    }
+
+    private void fetchStoreInfo(Reservation reservationItem, TableInfo tableInfo) {
+        int storeId = tableInfo.getStoreId();
+        storeReference.child(String.valueOf(storeId)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot storeSnapshot) {
+                if (storeSnapshot.exists()) {
+                    Store store = storeSnapshot.getValue(Store.class);
+                    if (store != null) {
+                        reservationItem.setStoreName(store.getStoreName());
+                        reservationItem.setStorePhone(store.getPhone());
+                        reservationItem.setTableSeats(tableInfo.getSeats());
+
+                        reservationList.add(reservationItem); // Thêm mục vào danh sách
+                        reservationAdapter.notifyDataSetChanged(); // Cập nhật Adapter
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("StoreInfo", "Error fetching store data", databaseError.toException());
+            }
+        });
+    }
+
+    private void deleteReservationAndUpdateTableInfo(Reservation reservation) {
+        DatabaseReference reservationRef = FirebaseDatabase.getInstance().getReference("Reservation")
+                .child(String.valueOf(reservation.getReservationId())); // Lấy ID của Reservation để xoá
+
+        // Xóa reservation
+        reservationRef.removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Lấy thông tin TableInfo và cập nhật status
+                DatabaseReference tableInfoRef = FirebaseDatabase.getInstance().getReference("TableInfo")
+                        .child(String.valueOf(reservation.getTableInfoId()));
+
+                tableInfoRef.child("status").setValue("available") // Đặt lại trạng thái bàn
+                        .addOnCompleteListener(updateTask -> {
+                            if (updateTask.isSuccessful()) {
+                                Toast.makeText(getContext(), "Đã huỷ bàn!", Toast.LENGTH_SHORT).show();
+                                // Cập nhật danh sách sau khi xoá
+                                reservationList.remove(reservation);
+                                reservationAdapter.notifyDataSetChanged();
+                            } else {
+                                Log.e("ReservationFragment", "Lỗi khi cập nhật trạng thái bàn");
+                            }
+                        });
+            } else {
+                Log.e("ReservationFragment", "Lỗi khi xoá reservation", task.getException());
+            }
+        });
+    }
+
 }
 

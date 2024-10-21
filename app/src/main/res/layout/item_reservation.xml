@@ -50,7 +50,7 @@
                 android:id="@+id/lb_sdt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SĐT:"
+                android:text="SĐT quán:"
                 android:layout_marginRight="20dp"
                 android:textColor="#000"
                 android:textSize="16sp"
