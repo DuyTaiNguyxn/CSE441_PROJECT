@@ -7,7 +7,7 @@ public class Food implements Serializable {
     private String description;
     private String imgURL;
     private double price;
-    private int quantitySold; // Thêm thuộc tính để tính số lượng bán
+    private int quantitySold;
 
     public Food() {
         // Constructor mặc định
@@ -20,7 +20,7 @@ public class Food implements Serializable {
         this.description = description;
         this.imgURL = imgURL;
         this.price = price;
-        this.quantitySold = 0; // Ban đầu số lượng bán là 0
+        this.quantitySold = 0;
     }
 
     // Getter và Setter cho các thuộc tính

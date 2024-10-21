@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -55,14 +56,31 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             bundle.putSerializable("food", food);  // Truyền đối tượng Food qua Serializable
 
             DetailFoodFragment detailFoodFragment = new DetailFoodFragment();
-            detailFoodFragment.setArguments(bundle);  // Set dữ liệu vào Fragment
+            detailFoodFragment.setArguments(bundle);// Set dữ liệu vào Fragment
 
-            // Kiểm tra nếu context là một instance của FragmentActivity
+            // Chỉ thay đổi UI khi mở fragment chi tiết sản phẩm
             if (context instanceof FragmentActivity) {
                 FragmentActivity fragmentActivity = (FragmentActivity) context;
+
+                // Ẩn nút "btn_back_Topnav" và thay đổi nội dung "txt_app_name"
+                ImageButton btnBackTopnav = fragmentActivity.findViewById(R.id.btn_back_Topnav);
+                TextView txtAppName = fragmentActivity.findViewById(R.id.txt_app_name);
+
+                if (btnBackTopnav != null) {
+                    btnBackTopnav.setVisibility(View.VISIBLE);
+                    btnBackTopnav.setOnClickListener(v1 -> {
+                        fragmentActivity.getSupportFragmentManager().popBackStack();
+                    });
+                }
+
+                if (txtAppName != null) {
+                    txtAppName.setText("Chi tiết sản phẩm");  // Đặt tên ứng dụng khi vào fragment chi tiết sản phẩm
+                }
+
+                // Chuyển fragment
                 fragmentActivity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragmentContainerView, detailFoodFragment)  // Đảm bảo rằng R.id.fragmentContainerView là đúng ID của container
+                        .replace(R.id.fragmentContainerView, detailFoodFragment)
                         .addToBackStack(null)
                         .commit();
             }

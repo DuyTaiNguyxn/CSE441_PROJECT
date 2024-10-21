@@ -4,11 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.bumptech.glide.Glide;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.model.Food;
@@ -58,4 +63,23 @@ public class DetailFoodFragment extends Fragment {
             }
         }
     }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        FragmentActivity fragmentActivity = getActivity();
+        if (fragmentActivity != null) {
+            // Hiện lại nút "btn_back_Topnav"
+            ImageButton btnBackTopnav = fragmentActivity.findViewById(R.id.btn_back_Topnav);
+            if (btnBackTopnav != null) {
+                btnBackTopnav.setVisibility(View.GONE);  // Ẩn nút
+            }
+
+            // Khôi phục lại nội dung "txt_app_name"
+            TextView txtAppName = fragmentActivity.findViewById(R.id.txt_app_name);
+            if (txtAppName != null) {
+                txtAppName.setText(R.string.app_name);  // Khôi phục về tên app gốc
+            }
+        }
+    }
+
 }
