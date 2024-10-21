@@ -140,7 +140,7 @@
                 android:gravity="top|start"
                 android:hint="Nhập ghi chú"
                 android:inputType="textMultiLine"
-                android:lines="3"
+                android:lines="4"
                 android:maxLines="10"
                 android:background="@android:color/transparent" />
 

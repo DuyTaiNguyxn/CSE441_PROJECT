@@ -118,7 +118,6 @@ public class StoreFragment extends Fragment {
 
                     // Lấy danh sách bàn có sẵn cho cửa hàng
                     ArrayList<TableInfo> availableTables = availableTablesMap.getOrDefault(storeId, new ArrayList<>());
-
                     store.setAvailableTableInfoList(availableTables);  // Gán danh sách bàn có sẵn cho Store
 
                     storeList.add(store);

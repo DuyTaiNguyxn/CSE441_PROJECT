@@ -23,8 +23,12 @@ import com.duytai.cse441_project.adapter.TableBookingAdapter;
 import com.duytai.cse441_project.model.Store;
 import com.duytai.cse441_project.model.TableInfo;
 import com.duytai.cse441_project.model.Reservation;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -91,23 +95,23 @@ public class TableBookingFragment extends Fragment {
                 return;
             }
 
-            // Tạo một Push ID tự động
-            String newId = reservationRef.push().getKey();
-            userId = 0;
-            // Sử dụng Push ID như là reservationId
-            Reservation reservation = new Reservation(
-                    newId,  // Sử dụng Push ID
-                    userId,  // Ví dụ userId
-                    selectedTableId,
-                    date,
-                    time,
-                    note
-            );
+            // Lấy reservationId lớn nhất từ Firebase
+            getMaxReservationId(maxId -> {
+                int newId = maxId + 1; // Tăng ID lên 1
+                userId = 0;
 
-            // Lưu thông tin đặt bàn vào Firebase
-            String reservationId = reservationRef.push().getKey(); // Tạo key tự động cho reservation
-            if (reservationId != null) {
-                reservationRef.child(reservationId).setValue(reservation)
+                // Sử dụng Push ID như là reservationId
+                Reservation reservation = new Reservation(
+                        newId,  // Sử dụng ID mới
+                        userId,
+                        selectedTableId,
+                        date,
+                        time,
+                        note
+                );
+
+                // Lưu thông tin đặt bàn vào Firebase
+                reservationRef.child(String.valueOf(newId)).setValue(reservation)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 // Khi đặt bàn thành công, cập nhật status của bàn
@@ -118,11 +122,38 @@ public class TableBookingFragment extends Fragment {
                                 Toast.makeText(getContext(), "Đặt bàn thất bại!", Toast.LENGTH_SHORT).show();
                             }
                         });
-            }
+            });
         });
 
         // Thực hiện các thao tác khác trong fragment
         return view;
+    }
+
+    private void getMaxReservationId(OnMaxIdReceivedListener listener) {
+        reservationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int maxId = 0;
+                for (DataSnapshot reservationSnapshot : snapshot.getChildren()) {
+                    Reservation reservation = reservationSnapshot.getValue(Reservation.class);
+                    if (reservation != null && reservation.getReservationId() > maxId) {
+                        maxId = reservation.getReservationId();
+                    }
+                }
+                listener.onMaxIdReceived(maxId);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("TableBookingFragment", "Failed to read value.", error.toException());
+                listener.onMaxIdReceived(0); // Trong trường hợp có lỗi, trả về 0
+            }
+        });
+    }
+
+    // Tạo một interface để nhận ID tối đa
+    interface OnMaxIdReceivedListener {
+        void onMaxIdReceived(int maxId);
     }
 
     private void showDatePickerDialog() {
