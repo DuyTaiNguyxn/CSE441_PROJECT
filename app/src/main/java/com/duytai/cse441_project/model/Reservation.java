@@ -1,10 +1,10 @@
 package com.duytai.cse441_project.model;
 
 public class Reservation {
-    private int reservationId, userId, tableInfoId ;
-    private String reservationDate, reservationTime, note;
+    private int  userId, tableInfoId ;
+    private String reservationId, reservationDate, reservationTime, note;
 
-    public Reservation(int reservationId, int userId, int tableInfoId, String reservationDate, String reservationTime, String note) {
+    public Reservation(String reservationId, int userId, int tableInfoId, String reservationDate, String reservationTime, String note) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.tableInfoId = tableInfoId;
@@ -13,11 +13,11 @@ public class Reservation {
         this.note = note;
     }
 
-    public int getReservationId() {
+    public String getReservationId() {
         return reservationId;
     }
 
-    public void setReservationId(int reservationId) {
+    public void setReservationId(String reservationId) {
         this.reservationId = reservationId;
     }
 
