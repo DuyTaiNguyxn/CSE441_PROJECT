@@ -1,6 +1,6 @@
 package com.duytai.cse441_project.model;
-
-public class Food {
+import java.io.Serializable;
+public class Food implements Serializable {
     private int foodId;
     private int categoryId; // Thêm thuộc tính categoryId
     private String foodName;
