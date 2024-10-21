@@ -39,7 +39,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         TableInfo table = availableTableList.get(position);
         String strTableId = String.valueOf(table.getTableId()+1);
         // Thiết lập dữ liệu cho TextView
-        holder.availableTable.setText("Bàn " + strTableId + ": " + table.getSeats() + " chỗ");
+        holder.availableTable.setText("Bàn " + strTableId + " (" + table.getSeats() + " chỗ)");
 
         // Cập nhật trạng thái 'selected' cho item
         if (selectedPosition == position) {

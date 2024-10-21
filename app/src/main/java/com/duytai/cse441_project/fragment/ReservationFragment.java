@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.duytai.cse441_project.R;
-import com.duytai.cse441_project.adapter.CategoryAdapter;
 import com.duytai.cse441_project.adapter.ReservationAdapter;
 import com.duytai.cse441_project.model.Store;
 import com.duytai.cse441_project.model.TableInfo;
+import com.duytai.cse441_project.model.Reservation;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ReservationFragment extends Fragment {
 
@@ -35,7 +37,9 @@ public class ReservationFragment extends Fragment {
     private Button btnSubmit;
 
     private ReservationAdapter reservationAdapter;
-    private int selectedTableId;
+    private int selectedTableId, userId;
+    private DatabaseReference reservationRef;
+    private DatabaseReference tableInfoRef;
 
     @Nullable
     @Override
@@ -71,6 +75,52 @@ public class ReservationFragment extends Fragment {
         tvDatePicker.setOnClickListener(v -> showDatePickerDialog());
         tvTimePicker.setOnClickListener(v -> showTimePickerDialog());
 
+        reservationRef = FirebaseDatabase.getInstance().getReference("Reservation");
+        tableInfoRef = FirebaseDatabase.getInstance().getReference("TableInfo");
+        btnSubmit.setOnClickListener(v -> {
+            String date = tvSelectedDate.getText().toString();
+            String time = tvSelectedTime.getText().toString();
+            String note = edtNote.getText().toString();
+
+            if (date.isEmpty() || time.isEmpty()) {
+                Toast.makeText(getContext(), "Vui lòng chọn ngày và giờ!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedTableId == 0) { // Kiểm tra xem có bàn nào được chọn hay không
+                Toast.makeText(getContext(), "Vui lòng chọn bàn!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Tạo một Push ID tự động
+            String newId = reservationRef.push().getKey();
+            userId = 0;
+            // Sử dụng Push ID như là reservationId
+            Reservation reservation = new Reservation(
+                    newId,  // Sử dụng Push ID
+                    userId,  // Ví dụ userId
+                    selectedTableId,
+                    date,
+                    time,
+                    note
+            );
+
+            // Lưu thông tin đặt bàn vào Firebase
+            String reservationId = reservationRef.push().getKey(); // Tạo key tự động cho reservation
+            if (reservationId != null) {
+                reservationRef.child(reservationId).setValue(reservation)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                // Khi đặt bàn thành công, cập nhật status của bàn
+                                updateTableStatus(selectedTableId, "occupied");
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                                Toast.makeText(getContext(), "Đặt bàn thành công!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Đặt bàn thất bại!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
         // Thực hiện các thao tác khác trong fragment
         return view;
     }
@@ -103,4 +153,16 @@ public class ReservationFragment extends Fragment {
     public void selectedTable(int tableId){
         selectedTableId = tableId;
     }
+
+    private void updateTableStatus(int tableId, String newStatus) {
+        tableInfoRef.child(String.valueOf(tableId)).child("status").setValue(newStatus)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("Reservation", "Trạng thái bàn đã được cập nhật.");
+                    } else {
+                        Log.d("Reservation", "Cap nhat trạng thái bàn that bai.");
+                    }
+                });
+    }
+
 }
