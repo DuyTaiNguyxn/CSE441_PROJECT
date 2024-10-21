@@ -50,13 +50,9 @@ public class CategoryFragment extends Fragment {
         recyclerCategory.setAdapter(categoryAdapter);
 
         // Khởi tạo RecyclerView cho món ăn
-// Sử dụng GridLayoutManager thay vì LinearLayoutManager
         recyclerFood = view.findViewById(R.id.recyclerFoodByCategory);
-
-// Khởi tạo GridLayoutManager với số cột là 2
         GridLayoutManager foodLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
         recyclerFood.setLayoutManager(foodLayoutManager);
-
 
         // Khởi tạo danh sách và adapter cho món ăn
         foodList = new ArrayList<>();
@@ -94,10 +90,7 @@ public class CategoryFragment extends Fragment {
 
     // Hàm lấy sản phẩm dựa trên categoryId từ Firebase
     public void loadFoodByCategory(int categoryId) {
-        // Khởi tạo tham chiếu đến bảng Food trong Firebase
         DatabaseReference foodReference = FirebaseDatabase.getInstance().getReference("Food");
-
-        // Lấy dữ liệu món ăn từ Firebase dựa trên categoryId
         foodReference.orderByChild("categoryId").equalTo(categoryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot foodSnapshot) {
@@ -108,8 +101,6 @@ public class CategoryFragment extends Fragment {
                         foodList.add(foodItem); // Thêm món ăn vào danh sách
                     }
                 }
-
-                // Hiển thị danh sách món ăn
                 displayProducts(foodList);
             }
 
