@@ -15,7 +15,7 @@
         android:theme="@style/Theme.CSE441_PROJECT"
         tools:targetApi="31">
         <activity
-            android:name=".fragment.ReservationFragment"
+            android:name=".fragment.TableBookingFragment"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.duytai.cse441_project.R;
-import com.duytai.cse441_project.adapter.TableBookingAdapter;
+import com.duytai.cse441_project.adapter.BookTableAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -33,7 +33,7 @@ public class BookTableFragment extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
 
         // Thiết lập adapter cho ViewPager2
-        TableBookingAdapter adapterBooking = new TableBookingAdapter(this);
+        BookTableAdapter adapterBooking = new BookTableAdapter(this);
         viewPager.setAdapter(adapterBooking);
 
         // Đồng bộ TabLayout với ViewPager2
