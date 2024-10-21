@@ -1,10 +1,16 @@
 package com.duytai.cse441_project.model;
 
 public class Reservation {
-    private int  userId, tableInfoId ;
-    private String reservationId, reservationDate, reservationTime, note;
+    private int reservationId;
+    private int userId, tableInfoId ;
+    private String reservationDate, reservationTime, note;
+    private String storeName, storePhone;
+    private int tableSeats;
 
-    public Reservation(String reservationId, int userId, int tableInfoId, String reservationDate, String reservationTime, String note) {
+    public Reservation() {
+    }
+
+    public Reservation(int reservationId, int userId, int tableInfoId, String reservationDate, String reservationTime, String note) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.tableInfoId = tableInfoId;
@@ -13,11 +19,11 @@ public class Reservation {
         this.note = note;
     }
 
-    public String getReservationId() {
+    public int getReservationId() {
         return reservationId;
     }
 
-    public void setReservationId(String reservationId) {
+    public void setReservationId(int reservationId) {
         this.reservationId = reservationId;
     }
 
@@ -59,6 +65,30 @@ public class Reservation {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public int getTableSeats() {
+        return tableSeats;
+    }
+
+    public void setTableSeats(int tableSeats) {
+        this.tableSeats = tableSeats;
+    }
+
+    public String getStorePhone() {
+        return storePhone;
+    }
+
+    public void setStorePhone(String storePhone) {
+        this.storePhone = storePhone;
     }
 }
 
