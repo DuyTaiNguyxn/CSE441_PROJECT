@@ -1,11 +1,9 @@
 package com.duytai.cse441_project.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BookingFragment extends Fragment {
+public class StoreFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private StoreAdapter storeAdapter;
@@ -55,7 +53,7 @@ public class BookingFragment extends Fragment {
                     Toast.makeText(getActivity(), "Cơ sở đã hết bàn trống.", Toast.LENGTH_LONG).show();
                 } else {
                     // Tạo một instance của ReservationFragment
-                    ReservationFragment reservationFragment = new ReservationFragment();
+                    TableBookingFragment reservationFragment = new TableBookingFragment();
 
                     // Truyền dữ liệu
                     Bundle bundle = new Bundle();
