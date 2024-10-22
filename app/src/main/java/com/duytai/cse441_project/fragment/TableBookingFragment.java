@@ -2,7 +2,9 @@ package com.duytai.cse441_project.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.icu.util.Calendar;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,8 +42,9 @@ public class TableBookingFragment extends Fragment {
     private EditText edtNote;
     private Button btnSubmit;
 
-    private TableBookingAdapter reservationAdapter;
+    private TableBookingAdapter tableBookingAdapter;
     private int selectedTableId, userId;
+    private String locationLink;
     private DatabaseReference reservationRef;
     private DatabaseReference tableInfoRef;
 
@@ -72,12 +75,15 @@ public class TableBookingFragment extends Fragment {
             storeData = (Store) getArguments().getSerializable("storeData");
             availableTableList = (ArrayList<TableInfo>) getArguments().getSerializable("availableTableData");
         }
-        reservationAdapter = new TableBookingAdapter(getContext(), availableTableList, this);
-        rcvTable.setAdapter(reservationAdapter);
+        tableBookingAdapter = new TableBookingAdapter(getContext(), availableTableList, this);
+        rcvTable.setAdapter(tableBookingAdapter);
 
         tvStoreName.setText(storeData.getStoreName());
         tvDatePicker.setOnClickListener(v -> showDatePickerDialog());
         tvTimePicker.setOnClickListener(v -> showTimePickerDialog());
+
+        locationLink = storeData.getLocationLink();
+        tvStoreLocation.setOnClickListener(v -> goToMap(locationLink));
 
         reservationRef = FirebaseDatabase.getInstance().getReference("Reservation");
         tableInfoRef = FirebaseDatabase.getInstance().getReference("TableInfo");
@@ -97,7 +103,7 @@ public class TableBookingFragment extends Fragment {
 
             // Lấy reservationId lớn nhất từ Firebase
             getMaxReservationId(maxId -> {
-                int newId = maxId + 1; // Tăng ID lên 1
+                int newId = maxId + 1; // Tăng ID lên 11
                 userId = 0;
 
                 // Sử dụng Push ID như là reservationId
@@ -180,6 +186,19 @@ public class TableBookingFragment extends Fragment {
         }, hour, minute, true);
         timePickerDialog.show();
     }
+
+    public void goToMap(String locationLink) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(locationLink));
+        // Kiểm tra xem có ứng dụng nào có thể xử lý intent này không
+        if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            // Xử lý khi không có ứng dụng nào phù hợp
+            Toast.makeText(getActivity(), "Không tìm thấy ứng dụng bản đồ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     public void selectedTable(int tableId){
         selectedTableId = tableId;

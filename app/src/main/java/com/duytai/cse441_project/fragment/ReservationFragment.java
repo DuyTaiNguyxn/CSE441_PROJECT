@@ -1,12 +1,10 @@
 package com.duytai.cse441_project.fragment;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ReservationFragment extends Fragment {
@@ -49,26 +48,28 @@ public class ReservationFragment extends Fragment {
         rcvReservation.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Khởi tạo Adapter và gán vào RecyclerView
-        reservationAdapter = new ReservationAdapter(reservationList, new ReservationAdapter.OnCancelButtonClickListener() {
-            @Override
-            public void onCancelButtonClick(Reservation reservation) {
-                // Hiển thị dialog xác nhận trước khi huỷ
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Xác nhận huỷ")
-                        .setMessage("Bạn có chắc chắn muốn huỷ bàn này không?")
-                        .setCancelable(false)  // Không cho phép đóng khi nhấn ra ngoài
-                        .setPositiveButton("Có", (dialog, which) -> {
-                            // Thực hiện huỷ bàn ở đây
-                            deleteReservationAndUpdateTableInfo(reservation);
-                            Toast.makeText(getContext(), "Đã huỷ bàn!", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("Không", (dialog, which) -> {
-                            // Đóng dialog nếu chọn "Không"
-                            dialog.dismiss();
-                        })
-                        .show();
-            }
-        });
+        reservationAdapter = new ReservationAdapter(reservationList,
+                new ReservationAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Reservation reservation) {
+                        // Tạo instance của DetailReservationFragment
+                        DetailReservationFragment detailReservationFragment = new DetailReservationFragment();
+
+                        // Tạo Bundle và truyền đối tượng Reservation
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("reservation", (Serializable) reservation);
+
+                        // Gán Bundle vào Fragment
+                        detailReservationFragment.setArguments(bundle);
+
+                        // Thực hiện chuyển Fragment
+                        requireActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragmentContainerView, detailReservationFragment)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+        );
 
         rcvReservation.setAdapter(reservationAdapter);
 
@@ -130,46 +131,19 @@ public class ReservationFragment extends Fragment {
                     Store store = storeSnapshot.getValue(Store.class);
                     if (store != null) {
                         reservationItem.setStoreName(store.getStoreName());
+                        reservationItem.setStoreLocation(store.getLocationLink());
                         reservationItem.setStorePhone(store.getPhone());
                         reservationItem.setTableSeats(tableInfo.getSeats());
-
+                        reservationItem.setStoreImageUrl(store.getImgURL());
                         reservationList.add(reservationItem); // Thêm mục vào danh sách
-                        reservationAdapter.notifyDataSetChanged(); // Cập nhật Adapter
                     }
                 }
+                reservationAdapter.notifyDataSetChanged(); // Cập nhật Adapter
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("StoreInfo", "Error fetching store data", databaseError.toException());
-            }
-        });
-    }
-
-    private void deleteReservationAndUpdateTableInfo(Reservation reservation) {
-        DatabaseReference reservationRef = FirebaseDatabase.getInstance().getReference("Reservation")
-                .child(String.valueOf(reservation.getReservationId())); // Lấy ID của Reservation để xoá
-
-        // Xóa reservation
-        reservationRef.removeValue().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Lấy thông tin TableInfo và cập nhật status
-                DatabaseReference tableInfoRef = FirebaseDatabase.getInstance().getReference("TableInfo")
-                        .child(String.valueOf(reservation.getTableInfoId()));
-
-                tableInfoRef.child("status").setValue("available") // Đặt lại trạng thái bàn
-                        .addOnCompleteListener(updateTask -> {
-                            if (updateTask.isSuccessful()) {
-                                Toast.makeText(getContext(), "Đã huỷ bàn!", Toast.LENGTH_SHORT).show();
-                                // Cập nhật danh sách sau khi xoá
-                                reservationList.remove(reservation);
-                                reservationAdapter.notifyDataSetChanged();
-                            } else {
-                                Log.e("ReservationFragment", "Lỗi khi cập nhật trạng thái bàn");
-                            }
-                        });
-            } else {
-                Log.e("ReservationFragment", "Lỗi khi xoá reservation", task.getException());
             }
         });
     }

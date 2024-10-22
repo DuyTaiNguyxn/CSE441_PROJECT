@@ -10,8 +10,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@+id/btn_submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -137,12 +138,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:background="@android:color/transparent"
                 android:gravity="top|start"
                 android:hint="Nhập ghi chú"
                 android:inputType="textMultiLine"
                 android:lines="4"
-                android:maxLines="10"
-                android:background="@android:color/transparent" />
+                android:maxLines="10" />
 
         </LinearLayout>
     </ScrollView>
@@ -154,6 +155,7 @@
         android:backgroundTint="@color/app_color"
         android:text="Xác nhận"
         android:textColor="@color/black"
+        app:cornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

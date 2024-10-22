@@ -1,10 +1,12 @@
 package com.duytai.cse441_project.model;
 
-public class Reservation {
+import java.io.Serializable;
+
+public class Reservation implements Serializable {
     private int reservationId;
     private int userId, tableInfoId ;
     private String reservationDate, reservationTime, note;
-    private String storeName, storePhone;
+    private String storeName, storeLocation, storePhone, storeImageUrl;
     private int tableSeats;
 
     public Reservation() {
@@ -83,12 +85,28 @@ public class Reservation {
         this.tableSeats = tableSeats;
     }
 
+    public String getStoreLocation() {
+        return storeLocation;
+    }
+
+    public void setStoreLocation(String storeLocation) {
+        this.storeLocation = storeLocation;
+    }
+
     public String getStorePhone() {
         return storePhone;
     }
 
     public void setStorePhone(String storePhone) {
         this.storePhone = storePhone;
+    }
+
+    public String getStoreImageUrl() {
+        return storeImageUrl;
+    }
+
+    public void setStoreImageUrl(String storeImageUrl) {
+        this.storeImageUrl = storeImageUrl;
     }
 }
 
