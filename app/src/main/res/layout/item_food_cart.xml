@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:layout_margin="0dp"
+    android:layout_margin="5dp"
     android:background="@drawable/custom_btn_quanty">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/custom_btn_quanty"
         android:orientation="horizontal"
         app:cornerRadius="20dp">
@@ -17,16 +17,18 @@
         <ImageView
             android:id="@+id/img_food_cart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:layout_marginBottom="5dp"
-            android:layout_weight="0.025"
+            android:layout_weight="1"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="3"
             android:orientation="vertical">
 
             <TextView
@@ -66,7 +68,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <ImageButton

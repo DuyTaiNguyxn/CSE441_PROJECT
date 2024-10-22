@@ -20,7 +20,6 @@ public class Food implements Serializable {
         this.description = description;
         this.imgURL = imgURL;
         this.price = price;
-        this.quantitySold = 0;
     }
 
     // Getter và Setter cho các thuộc tính

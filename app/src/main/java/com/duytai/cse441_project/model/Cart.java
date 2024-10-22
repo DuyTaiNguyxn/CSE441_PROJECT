@@ -4,15 +4,15 @@ public class Cart {
     private int cartId;
     private int userId;
 
-    public Cart() {
-        // Mặc định constructor
-    }
-
+    // Constructor mặc định
+    public Cart() {}
+    // Constructor có tham số
     public Cart(int cartId, int userId) {
         this.cartId = cartId;
         this.userId = userId;
     }
 
+    // Getter và Setter
     public int getCartId() {
         return cartId;
     }

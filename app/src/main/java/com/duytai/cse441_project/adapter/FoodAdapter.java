@@ -27,12 +27,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-
 import android.os.Bundle;
 import android.widget.Toast;
-
 import androidx.fragment.app.FragmentActivity; // Dùng để lấy FragmentManager
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
