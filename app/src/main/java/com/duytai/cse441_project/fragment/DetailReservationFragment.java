@@ -25,8 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class DetailReservationFragment extends Fragment {
     private Reservation reservation;
-    ImageView storeImage;
-    TextView tvStoreName, tvDirection, tvStorePhone, tvDate, tvTime, tvTable, tvNote;
+    ImageView icDirection, icCall, storeImage;
+    TextView tvStoreName, tvStorePhone, tvDate, tvTime, tvTable, tvNote;
     Button btnCancelReservation;
 
     @Nullable
@@ -38,7 +38,8 @@ public class DetailReservationFragment extends Fragment {
 
         storeImage = view.findViewById(R.id.imgStore);
         tvStoreName = view.findViewById(R.id.tv_store);
-        tvDirection = view.findViewById(R.id.tv_direction);
+        icDirection = view.findViewById(R.id.ic_direction);
+        icCall = view.findViewById(R.id.ic_call);
         tvStorePhone = view.findViewById(R.id.tv_phone);
         tvDate = view.findViewById(R.id.tv_date);
         tvTime = view.findViewById(R.id.tv_time);
@@ -61,7 +62,7 @@ public class DetailReservationFragment extends Fragment {
                 .error(R.drawable.logo)
                 .into(storeImage);
 
-        tvDirection.setOnClickListener(v -> {
+        icDirection.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(reservation.getStoreLocation()));
             // sử dụng getActivity() hoặc requireActivity() để lấy Context
@@ -73,7 +74,7 @@ public class DetailReservationFragment extends Fragment {
             }
         });
 
-        tvStorePhone.setOnClickListener( v -> {
+        icCall.setOnClickListener( v -> {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:" + reservation.getStorePhone())); // Đặt dữ liệu là số điện thoại
 

@@ -41,7 +41,7 @@ public class StoreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_booking, container, false);
+        View view = inflater.inflate(R.layout.fragment_store, container, false);
 
         recyclerView = view.findViewById(R.id.rcv_store);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
