@@ -2,6 +2,7 @@ package com.duytai.cse441_project.fragment;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -62,59 +65,69 @@ public class DetailReservationFragment extends Fragment {
                 .error(R.drawable.logo)
                 .into(storeImage);
 
-        icDirection.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(reservation.getStoreLocation()));
-            // sử dụng getActivity() hoặc requireActivity() để lấy Context
-            if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                // Xử lý khi không có ứng dụng nào phù hợp
-                Toast.makeText(getActivity(), "Không tìm thấy ứng dụng bản đồ", Toast.LENGTH_SHORT).show();
-            }
-        });
+        icDirection.setOnClickListener(v -> openMap());
+        icCall.setOnClickListener(v -> makePhoneCall());
 
-        icCall.setOnClickListener( v -> {
-            Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:" + reservation.getStorePhone())); // Đặt dữ liệu là số điện thoại
-
-            // sử dụng getActivity() hoặc requireActivity() để lấy Context
-            if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                // Xử lý khi không có ứng dụng nào phù hợp
-                Toast.makeText(getContext(), "Không tìm thấy ứng dụng gọi điện", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        btnCancelReservation.setOnClickListener( v -> {
+        btnCancelReservation.setOnClickListener(v -> {
             new AlertDialog.Builder(getContext())
                     .setTitle("Xác nhận huỷ")
                     .setMessage("Bạn có chắc muốn huỷ đặt bàn này không?")
                     .setPositiveButton("Đồng ý", (dialog, which) -> {
                         deleteReservationAndUpdateTableInfo(reservation);
                     })
-                    .setNegativeButton("Hủy bỏ", (dialog, which) -> {
-                        dialog.dismiss();
-                    })
+                    .setNegativeButton("Hủy bỏ", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
         return view;
     }
 
+    private void openMap() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(reservation.getStoreLocation()));
+        if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(getActivity(), "Không tìm thấy ứng dụng bản đồ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void makePhoneCall() {
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CALL_PHONE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Quyền đã được cấp, thực hiện cuộc gọi
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + reservation.getStorePhone())));
+        } else {
+            // Yêu cầu cấp quyền nếu chưa có
+            requestPermissions(new String[]{android.Manifest.permission.CALL_PHONE}, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1) { // Mã yêu cầu CALL_PHONE
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Người dùng đã cấp quyền -> Thực hiện cuộc gọi
+                makePhoneCall();
+            } else {
+                // Người dùng từ chối quyền
+                Toast.makeText(getContext(), "Quyền gọi điện đã bị từ chối", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void deleteReservationAndUpdateTableInfo(Reservation reservation) {
         DatabaseReference reservationRef = FirebaseDatabase.getInstance().getReference("Reservation")
-                .child(String.valueOf(reservation.getReservationId())); // Lấy ID của Reservation để xoá
+                .child(String.valueOf(reservation.getReservationId()));
 
-        // Xóa reservation
         reservationRef.removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                // Lấy thông tin TableInfo và cập nhật status
                 DatabaseReference tableInfoRef = FirebaseDatabase.getInstance().getReference("TableInfo")
                         .child(String.valueOf(reservation.getTableInfoId()));
 
-                tableInfoRef.child("status").setValue("available") // Đặt lại trạng thái bàn
+                tableInfoRef.child("status").setValue("available")
                         .addOnCompleteListener(updateTask -> {
                             if (updateTask.isSuccessful()) {
                                 requireActivity().getSupportFragmentManager().popBackStack();
@@ -129,4 +142,3 @@ public class DetailReservationFragment extends Fragment {
         });
     }
 }
-
