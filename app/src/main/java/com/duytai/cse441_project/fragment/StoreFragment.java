@@ -51,8 +51,8 @@ public class StoreFragment extends Fragment {
                 if(store.getAvailableTables() == 0) {
                     Toast.makeText(getActivity(), "Cơ sở đã hết bàn trống.", Toast.LENGTH_LONG).show();
                 } else {
-                    // Tạo một instance của ReservationFragment
-                    TableBookingFragment reservationFragment = new TableBookingFragment();
+                    // Tạo một instance của TableBookingFragment
+                    TableBookingFragment tableBookingFragment = new TableBookingFragment();
 
                     // Truyền dữ liệu
                     Bundle bundle = new Bundle();
@@ -60,11 +60,11 @@ public class StoreFragment extends Fragment {
                     bundle.putSerializable("storeData", (Serializable) store);
                     bundle.putSerializable("availableTableData", store.getAvailableTableInfoList());
 
-                    reservationFragment.setArguments(bundle);
+                    tableBookingFragment.setArguments(bundle);
 
                     // Thực hiện điều hướng đến ReservationFragment
                     requireActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragmentContainerView, reservationFragment) // Thay thế R.id.fragment_container với ID của container chứa fragments
+                            .replace(R.id.fragmentContainerView, tableBookingFragment) // Thay thế R.id.fragment_container với ID của container chứa fragments
                             .addToBackStack(null) // Thêm vào back stack để có thể quay lại
                             .commit();
                 }
