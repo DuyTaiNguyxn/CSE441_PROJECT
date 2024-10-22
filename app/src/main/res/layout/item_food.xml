@@ -13,8 +13,8 @@
         android:layout_height="match_parent"
         android:background="@drawable/cusstom_search_bar"
         android:gravity="center"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/imgFood"

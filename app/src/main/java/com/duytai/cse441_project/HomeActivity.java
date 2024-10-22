@@ -43,9 +43,6 @@ public class HomeActivity extends AppCompatActivity {
         btn_back_Topnav = findViewById(R.id.btn_back_Topnav);
         txt_app_name = findViewById(R.id.txt_app_name);
 
-        // Thiết lập tên ứng dụng mặc định là "Chi tiết sản phẩm"
-        txt_app_name.setText("Chi tiết sản phẩm");
-
         // Tiêu thụ toàn bộ insets cho BottomNavigationView để tránh tác động lên các view khác
         ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView, (v, insets) -> {
             return WindowInsetsCompat.CONSUMED;
