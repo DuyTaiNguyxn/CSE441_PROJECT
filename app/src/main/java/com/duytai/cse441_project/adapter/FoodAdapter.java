@@ -198,6 +198,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                     // Kiểm tra nếu món ăn đã có
                     if (itemSnapshot.child("foodId").getValue(Integer.class) == foodId) {
                         itemExists = true;
+                        Toast.makeText(context, "Đã có sản phẩm trong giỏ hàng.Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
                         int quantity = itemSnapshot.child("quantity").getValue(Integer.class);
                         // Tăng số lượng
                         itemSnapshot.getRef().child("quantity").setValue(quantity + 1);
@@ -228,5 +229,4 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             }
         });
     }
-
 }
