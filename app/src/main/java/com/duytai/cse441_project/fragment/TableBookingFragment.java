@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,10 +38,11 @@ import java.util.ArrayList;
 
 public class TableBookingFragment extends Fragment {
 
-    private TextView tvStoreName, tvStoreLocation, tvSelectedDate, tvSelectedTime, tvDatePicker, tvTimePicker;
+    private TextView tvStoreName, tvSelectedDate, tvSelectedTime;
     private RecyclerView rcvTable;
     private EditText edtNote;
     private Button btnSubmit;
+    private ImageView icDirection, icDatePicker, icTimePicker;
 
     private TableBookingAdapter tableBookingAdapter;
     private int selectedTableId, userId;
@@ -53,14 +55,14 @@ public class TableBookingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reservation, container, false);
+        View view = inflater.inflate(R.layout.fragment_booking_table, container, false);
 
         tvStoreName = view.findViewById(R.id.tv_store_name);
-        tvStoreLocation = view.findViewById(R.id.tv_store_location);
+        icDirection = view.findViewById(R.id.ic_direction);
         tvSelectedDate = view.findViewById(R.id.tv_selected_date);
         tvSelectedTime = view.findViewById(R.id.tv_selected_time);
-        tvDatePicker = view.findViewById(R.id.btn_date_picker);
-        tvTimePicker = view.findViewById(R.id.btn_time_picker);
+        icDatePicker = view.findViewById(R.id.ic_date_picker);
+        icTimePicker = view.findViewById(R.id.ic_time_picker);
         edtNote = view.findViewById(R.id.edt_note);
         btnSubmit = view.findViewById(R.id.btn_submit);
 
@@ -79,11 +81,11 @@ public class TableBookingFragment extends Fragment {
         rcvTable.setAdapter(tableBookingAdapter);
 
         tvStoreName.setText(storeData.getStoreName());
-        tvDatePicker.setOnClickListener(v -> showDatePickerDialog());
-        tvTimePicker.setOnClickListener(v -> showTimePickerDialog());
+        icDatePicker.setOnClickListener(v -> showDatePickerDialog());
+        icTimePicker.setOnClickListener(v -> showTimePickerDialog());
 
         locationLink = storeData.getLocationLink();
-        tvStoreLocation.setOnClickListener(v -> goToMap(locationLink));
+        icDirection.setOnClickListener(v -> goToMap(locationLink));
 
         reservationRef = FirebaseDatabase.getInstance().getReference("Reservation");
         tableInfoRef = FirebaseDatabase.getInstance().getReference("TableInfo");

@@ -42,7 +42,7 @@ public class ReservationFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Inflate layout của Fragment
-        View view = inflater.inflate(R.layout.fragment_booked, container, false);
+        View view = inflater.inflate(R.layout.fragment_reservation, container, false);
 
         rcvReservation = view.findViewById(R.id.rcv_booked_table);
         rcvReservation.setLayoutManager(new LinearLayoutManager(getContext()));
