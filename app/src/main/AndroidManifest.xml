@@ -2,7 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:allowBackup="true"
@@ -13,12 +21,13 @@
         android:roundIcon="@mipmap/logo_circle"
         android:supportsRtl="true"
         android:theme="@style/Theme.CSE441_PROJECT"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="31">
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".fragment.ReservationFragment"
+            android:name=".fragment.TableBookingFragment"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"

@@ -1,13 +1,13 @@
 package com.duytai.cse441_project.model;
-
-public class Food {
+import java.io.Serializable;
+public class Food implements Serializable {
     private int foodId;
     private int categoryId; // Thêm thuộc tính categoryId
     private String foodName;
     private String description;
     private String imgURL;
     private double price;
-    private int quantitySold; // Thêm thuộc tính để tính số lượng bán
+    private int quantitySold;
 
     public Food() {
         // Constructor mặc định
@@ -20,7 +20,6 @@ public class Food {
         this.description = description;
         this.imgURL = imgURL;
         this.price = price;
-        this.quantitySold = 0; // Ban đầu số lượng bán là 0
     }
 
     // Getter và Setter cho các thuộc tính
