@@ -1,7 +1,5 @@
 package com.duytai.cse441_project.adapter;
 
-import static java.security.AccessController.getContext;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,16 +21,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity; // Dùng để lấy FragmentManager
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
@@ -131,7 +125,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             imgFood = itemView.findViewById(R.id.imgFood);
             txtFoodName = itemView.findViewById(R.id.txtFoodName);
             txtFoodPrice = itemView.findViewById(R.id.txtFoodPrice);
-            btnBuy = itemView.findViewById(R.id.btn_buy);
+            btnBuy = itemView.findViewById(R.id.btn_buy_detail);
         }
     }
 
@@ -164,7 +158,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                                     // Gọi hàm thêm sản phẩm vào CartItem
                                     addFoodToCartItem(cartId, foodId);
                                 } else {
-                                    Log.w("TAG", "Tạo giỏ hàng mới thất bại.");
+                                    Toast.makeText(context, "Tạo mới giỏ hàng thất bại", Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }

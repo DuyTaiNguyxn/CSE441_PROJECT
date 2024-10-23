@@ -84,7 +84,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             if (newQuantity > 0) {
                 updateCartItemQuantity(cartItem.getCartItemId(), newQuantity);
             } else {
-                Toast.makeText(context, "Số lượng phải lớn hơn 0.", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(context)
+                        .setTitle("Xác nhận xóa")
+                        .setMessage("Số lượng đã về 0. Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?")
+                        .setPositiveButton("Có", (dialog, which) -> {
+                            removeCartItem(cartItem.getCartItemId());
+                            Toast.makeText(context, "Đã xóa sản phẩm khỏi giỏ hàng.", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Không", (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         });
 
@@ -131,7 +139,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     if (task.isSuccessful()) {
                         Toast.makeText(context, "Cập nhật số lượng thành công.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.w("TAG", "Cập nhật số lượng thất bại.");
                         Toast.makeText(context, "Cập nhật số lượng thất bại.", Toast.LENGTH_SHORT).show();
                     }
                 });

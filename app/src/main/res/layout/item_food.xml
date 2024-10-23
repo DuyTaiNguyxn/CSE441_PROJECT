@@ -49,7 +49,7 @@
             android:textSize="12sp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_buy"
+            android:id="@+id/btn_buy_detail"
             android:layout_width="110dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
