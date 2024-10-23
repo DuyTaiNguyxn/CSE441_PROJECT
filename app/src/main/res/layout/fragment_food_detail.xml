@@ -25,7 +25,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/cusstom_search_bar">
+                android:background="@drawable/custom_search_bar">
 
                 <ImageView
                     android:id="@+id/img_food_detail"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/btn_buy">
+            app:layout_constraintBottom_toTopOf="@id/btn_buy_detail">
 
             <TextView
                 android:id="@+id/txt_SoLuong"
@@ -96,7 +96,7 @@
                     android:src="@drawable/baseline_remove_24" />
 
                 <TextView
-                    android:id="@+id/text_quantity_detail"
+                    android:id="@+id/txt_quantity_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="0dp"
@@ -133,7 +133,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_buy"
+        android:id="@+id/btn_buy_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"

@@ -192,7 +192,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btn_Order"
+            android:id="@+id/btn_OrderFood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
