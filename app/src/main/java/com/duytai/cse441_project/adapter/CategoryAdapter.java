@@ -43,7 +43,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         if (selectedPosition == position) {
             holder.itemView.setBackground(context.getDrawable(R.drawable.selector_item_category));
         } else {
-            holder.itemView.setBackground(context.getDrawable(R.drawable.cusstom_search_bar));
+            holder.itemView.setBackground(context.getDrawable(R.drawable.custom_search_bar));
         }
 
         // Thiết lập sự kiện click cho item

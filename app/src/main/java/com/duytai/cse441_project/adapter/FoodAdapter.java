@@ -80,7 +80,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                 }
 
                 if (txtAppName != null) {
-                    txtAppName.setText("Chi tiết sản phẩm");  // Đặt tên ứng dụng khi vào fragment chi tiết sản phẩm
+                    txtAppName.setText("Chi tiết sản phẩm");
                 }
 
                 // Chuyển fragment

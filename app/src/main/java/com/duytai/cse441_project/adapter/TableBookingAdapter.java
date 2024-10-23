@@ -45,7 +45,7 @@ public class TableBookingAdapter extends RecyclerView.Adapter<TableBookingAdapte
         if (selectedPosition == position) {
             holder.itemView.setBackground(context.getDrawable(R.drawable.selector_item_category));
         } else {
-            holder.itemView.setBackground(context.getDrawable(R.drawable.cusstom_search_bar));
+            holder.itemView.setBackground(context.getDrawable(R.drawable.custom_search_bar));
         }
 
         // Thêm sự kiện click cho item

@@ -25,7 +25,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/cusstom_search_bar">
+                android:background="@drawable/custom_search_bar">
 
                 <ImageView
                     android:id="@+id/img_food_detail"

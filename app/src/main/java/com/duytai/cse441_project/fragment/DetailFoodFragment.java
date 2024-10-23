@@ -90,7 +90,6 @@ public class DetailFoodFragment extends Fragment {
                 if (txtQuantity != null && !txtQuantity.getText().toString().isEmpty()) {
                     int quantity = Integer.parseInt(txtQuantity.getText().toString());
                     txtQuantity.setText(String.valueOf(quantity + 1));
-                    Toast.makeText(getContext(), "Cập nhâht số lượng sản phẩm thành công", Toast.LENGTH_SHORT).show();
                 }
             });
             btn_minus_detai.setOnClickListener(v -> {
@@ -98,9 +97,7 @@ public class DetailFoodFragment extends Fragment {
                     int quantity = Integer.parseInt(txtQuantity.getText().toString());
                     if (quantity > 1) {
                         txtQuantity.setText(String.valueOf(quantity - 1));
-                        Toast.makeText(getContext(), "Cập nhâht số lượng sản phẩm thành công", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else{
                         Toast.makeText(getContext(), "Số lượng phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -123,6 +120,8 @@ public class DetailFoodFragment extends Fragment {
                 }
             });
 
+        }else{
+            Toast.makeText(getContext(), "Không tìm thấy thông tin sản phẩm", Toast.LENGTH_SHORT).show();
         }
     }
     @Override

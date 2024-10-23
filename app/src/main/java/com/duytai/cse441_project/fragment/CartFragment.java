@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
@@ -66,7 +67,12 @@ public class CartFragment extends Fragment {
             if (cartItemList.isEmpty()) {
                 Toast.makeText(getContext(), "Giỏ hàng trống. Vui lòng thêm món ăn vào giỏ hàng.", Toast.LENGTH_SHORT).show();
             } else {
-
+                OrderFragment orderFragment = new OrderFragment();
+                FragmentManager fragmentManager = getParentFragmentManager(); // Hoặc getSupportFragmentManager() nếu trong Activity
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, orderFragment) //
+                        .addToBackStack(null) // Thêm vào back stack nếu cần
+                        .commit();
             }
         });
 
@@ -97,9 +103,13 @@ public class CartFragment extends Fragment {
                                     Food food = foodSnapshot.getValue(Food.class);
                                     if (food != null) {
                                         double itemPrice = food.getPrice() * cartItem.getQuantity(); // Tính giá cho mỗi món
-                                        totalPrice += itemPrice; // Cộng dồn vào tổng
+                                        totalPrice += itemPrice;
                                         txtemptyCart.setText(totalPrice+"");
-                                        txtTotalPrice.setText(totalPrice+""); // Cập nhật tổng giá
+                                        // Xu ly giam gia o day (Chua lam)
+                                        txtDisscountPrice.setText("0");
+                                        double disscountPrice = txtDisscountPrice.getText().toString().isEmpty() ? 0 : Double.parseDouble(txtDisscountPrice.getText().toString());
+                                        txtTotalPrice.setText((totalPrice - disscountPrice)+""); // Cập nhật tổng giá
+
                                     }
                                 }
 

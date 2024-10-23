@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+
 import android.util.Log;
 
 import android.text.Editable;
@@ -36,11 +38,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
 
         // Find views
         btn_login = findViewById(R.id.btn_login);
@@ -134,4 +139,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
