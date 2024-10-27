@@ -2,6 +2,7 @@ package com.duytai.cse441_project.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.model.CartItem;
@@ -29,11 +28,16 @@ import java.util.List;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CartItem> cartItemList;
     private Context context;
+    private SharedPreferences sharedPreferences;
+    private int currentUserId;
 
     // Constructor
     public CartAdapter(Context context, List<CartItem> cartItemList) {
-        this.context = context; // Khởi tạo context
-        this.cartItemList = cartItemList; // Khởi tạo danh sách CartItem
+        this.context = context;
+        this.cartItemList = cartItemList;
+        // Lấy SharedPreferences và currentUserId
+        sharedPreferences = context.getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        currentUserId = sharedPreferences.getInt("userId", -1);
     }
 
     @NonNull
@@ -109,7 +113,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         });
     }
 
-
     @Override
     public int getItemCount() {
         return cartItemList.size();
@@ -133,7 +136,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
     private void updateCartItemQuantity(int cartItemId, int quantity) {
+        // Lấy currentUserId từ SharedPreferences
+        SharedPreferences sharedPreferences = context.getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        int currentUserId = sharedPreferences.getInt("userId", -1);
+
+        // Tham chiếu đến nhánh CartItem theo cartItemId
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem").child(String.valueOf(cartItemId));
+
+        // Cập nhật số lượng
         cartItemRef.child("quantity").setValue(quantity)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -144,14 +154,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 });
     }
 
+
+
+
     private void removeCartItem(int cartItemId) {
+        // Tham chiếu đến nhánh CartItem theo cartItemId
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem").child(String.valueOf(cartItemId));
+
+        // Xóa mục CartItem
         cartItemRef.removeValue()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         // Xóa thành công
                         cartItemList.removeIf(item -> item.getCartItemId() == cartItemId);
                         notifyDataSetChanged();
+                        Toast.makeText(context, "Xóa sản phẩm thành công.", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.w("TAG", "Xóa sản phẩm thất bại.");
                         Toast.makeText(context, "Xóa sản phẩm thất bại.", Toast.LENGTH_SHORT).show();
@@ -160,4 +177,3 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
 }
-

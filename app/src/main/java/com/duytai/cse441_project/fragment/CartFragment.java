@@ -2,6 +2,7 @@ package com.duytai.cse441_project.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,8 @@ public class CartFragment extends Fragment {
     private Button btn_PlaceOrder;
     private double totalPrice = 0;
     private Context context;
+    private SharedPreferences sharedPreferences;
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -81,7 +84,8 @@ public class CartFragment extends Fragment {
     }
 
     private void loadCartItems() {
-        int userId = 0; // Thay đổi giá trị này cho userId thực tế
+        sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem");
 
         cartItemRef.orderByChild("cartId").equalTo(userId)
