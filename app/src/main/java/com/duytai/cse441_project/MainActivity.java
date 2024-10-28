@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             password = etPassword.getText().toString().trim();
             // Lưu userId là 0 vào SharedPreferences
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt("userId", 2);
+            editor.putInt("userId", 0);
             editor.apply();
 
             // Chuyển đến HomeActivity

@@ -148,7 +148,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                         int cartId = cartSnapshot.child("cartId").getValue(Integer.class);
                         // Xử lý thêm sản phẩm vào CartItem
                         addFoodToCartItem(cartId, foodId);
-                        return; // Đã xử lý xong
                     }
                 } else {
                     // Nếu không tìm thấy cartId, tạo mới giỏ hàng
