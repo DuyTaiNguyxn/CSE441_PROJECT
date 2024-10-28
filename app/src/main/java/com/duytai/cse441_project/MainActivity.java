@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(password)) {
                     tvPasswordError.setText("Vui lòng nhập mật khẩu");
                     tvPasswordError.setVisibility(View.VISIBLE);
-                } else if (password.length() < 6) {
-                    tvPasswordError.setText("Mật khẩu phải có ít nhất 6 ký tự");
+                } else if (password.length() < 8) {
+                    tvPasswordError.setText("Mật khẩu phải có ít nhất 8 ký tự");
                     tvPasswordError.setVisibility(View.VISIBLE);
                 } else {
                     tvPasswordError.setVisibility(View.GONE);
