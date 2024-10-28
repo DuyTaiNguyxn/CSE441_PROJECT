@@ -2,6 +2,7 @@ package com.duytai.cse441_project.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,8 @@ public class CartFragment extends Fragment {
     private Button btn_PlaceOrder;
     private double totalPrice = 0;
     private Context context;
+    private SharedPreferences sharedPreferences;
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -67,21 +70,16 @@ public class CartFragment extends Fragment {
             if (cartItemList.isEmpty()) {
                 Toast.makeText(getContext(), "Giỏ hàng trống. Vui lòng thêm món ăn vào giỏ hàng.", Toast.LENGTH_SHORT).show();
             } else {
-                OrderFragment orderFragment = new OrderFragment();
-                FragmentManager fragmentManager = getParentFragmentManager(); // Hoặc getSupportFragmentManager() nếu trong Activity
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView, orderFragment) //
-                        .addToBackStack(null) // Thêm vào back stack nếu cần
-                        .commit();
+                navigateToConfirmOrderFragment();
             }
         });
-
 
         return view;
     }
 
     private void loadCartItems() {
-        int userId = 0; // Thay đổi giá trị này cho userId thực tế
+        sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem");
 
         cartItemRef.orderByChild("cartId").equalTo(userId)
@@ -128,8 +126,29 @@ public class CartFragment extends Fragment {
                     }
                 });
     }
+    // Hàm chuyển dữ liệu từ Cart này sang ComfirmOrder
+    private void navigateToConfirmOrderFragment() {
+        OrderFragment confirmOrderFragment = new OrderFragment();
+        //Chuan hoa du lieu
+        String discountCode = edtDisscount.getText().toString();
+        double disscountPrice = Double.parseDouble(txtDisscountPrice.getText().toString());
+        double totalPrice = Double.parseDouble(txtTotalPrice.getText().toString());
 
+        // Tạo Bundle và thêm dữ liệu vào đó
+        Bundle bundle = new Bundle();
+        bundle.putString("discountCode",discountCode );
+        bundle.putDouble("discountPrice", disscountPrice);
+        bundle.putDouble("totalPrice", totalPrice);
+        // Gán bundle vào fragment
+        confirmOrderFragment.setArguments(bundle);
 
+        // Thực hiện chuyển đổi fragment
+        FragmentManager fragmentManager = getParentFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, confirmOrderFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 
 
 }

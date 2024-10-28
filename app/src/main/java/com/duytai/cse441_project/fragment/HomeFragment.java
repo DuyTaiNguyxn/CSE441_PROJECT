@@ -146,7 +146,7 @@ public class HomeFragment extends Fragment {
                                     Collections.sort(topSaleList, new Comparator<Food>() {
                                         @Override
                                         public int compare(Food o1, Food o2) {
-                                            return Integer.compare(o2.getQuantitySold(), o1.getQuantitySold()); // Sắp xếp theo số lượng bán
+                                            return Integer.compare(o2.getQuantitySold(), o1.getQuantitySold());
                                         }
                                     });
 
@@ -159,21 +159,21 @@ public class HomeFragment extends Fragment {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.e("HomeFragment", "Error fetching food data", databaseError.toException());
+                                Log.e("HomeFragment", "Lỗi tải dữ liệu món ăn", databaseError.toException());
                             }
                         });
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("HomeFragment", "Error fetching category data", databaseError.toException());
+                        Log.e("HomeFragment", "Lỗi tải dữ liệu danh mục", databaseError.toException());
                     }
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("HomeFragment", "Error fetching order item data", databaseError.toException());
+                Log.e("HomeFragment", "Lỗi tải dữ liệu đơn hàng", databaseError.toException());
             }
         });
 
