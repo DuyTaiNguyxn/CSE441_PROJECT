@@ -1,6 +1,7 @@
 package com.duytai.cse441_project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -32,13 +33,15 @@ public class MainActivity extends AppCompatActivity {
     Button btn_login;
     EditText etPhoneNumber, etPassword;
     TextView tvPhoneError, tvPasswordError;
+    private String phoneNumber, password;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
+        sharedPreferences = getSharedPreferences("currentUserId", MODE_PRIVATE);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -47,12 +50,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+
+
         // Find views
         btn_login = findViewById(R.id.btn_login);
         etPhoneNumber = findViewById(R.id.et_phone_number);
         etPassword = findViewById(R.id.et_password);
         tvPhoneError = findViewById(R.id.tv_phone_error);
         tvPasswordError = findViewById(R.id.tv_password_error);
+
+        // Đặt lắng nghe cho nút đăng nhập
+        btn_login.setOnClickListener(v -> {
+            phoneNumber = etPhoneNumber.getText().toString().trim();
+            password = etPassword.getText().toString().trim();
+            // Lưu userId là 0 vào SharedPreferences
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("userId", 0);
+            editor.apply();
+
+            // Chuyển đến HomeActivity
+            Intent intent_login = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent_login);
+            finish(); // Đóng MainActivity
+
+        });
 
         // Set up TextWatchers for validation
         etPhoneNumber.addTextChangedListener(new TextWatcher() {
@@ -90,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(password)) {
                     tvPasswordError.setText("Vui lòng nhập mật khẩu");
                     tvPasswordError.setVisibility(View.VISIBLE);
-                } else if (password.length() < 6) {
-                    tvPasswordError.setText("Mật khẩu phải có ít nhất 6 ký tự");
+                } else if (password.length() < 8) {
+                    tvPasswordError.setText("Mật khẩu phải có ít nhất 8 ký tự");
                     tvPasswordError.setVisibility(View.VISIBLE);
                 } else {
                     tvPasswordError.setVisibility(View.GONE);
@@ -99,46 +121,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Set up login button listener
-        btn_login.setOnClickListener(v -> {
-            String phoneNumber = etPhoneNumber.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
-
-            if (validateLogin()) {
-                Intent intent_login = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(intent_login);
-            }
-        });
-
-        getFoodNameAndSetButton();
     }
 
     // Method to validate if the errors are hidden (valid inputs)
     private boolean validateLogin() {
         return tvPhoneError.getVisibility() == View.GONE && tvPasswordError.getVisibility() == View.GONE;
     }
-
-    // Method to fetch food data from Firebase and update UI
-    private void getFoodNameAndSetButton() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Food");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String foodName = snapshot.child("foodName").getValue(String.class);
-                    if (foodName != null) {
-                        //btn_login.setText(foodName); // Example of setting button text to foodName
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("FirebaseError", databaseError.getMessage());
-            }
-        });
-    }
-
-
 }
