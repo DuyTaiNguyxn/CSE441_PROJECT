@@ -18,13 +18,13 @@ import java.util.ArrayList;
 public class TableBookingAdapter extends RecyclerView.Adapter<TableBookingAdapter.ViewHolder> {
     private Context context;
     private ArrayList<TableInfo> availableTableList;
-    private TableBookingFragment reservationFragment;
+    private TableBookingFragment tableBookingFragment;
     private int selectedPosition = -1; // Vị trí item được chọn, mặc định là 0
 
-    public TableBookingAdapter(Context context, ArrayList<TableInfo> availableTableList, TableBookingFragment reservationFragment) {
+    public TableBookingAdapter(Context context, ArrayList<TableInfo> availableTableList, TableBookingFragment tableBookingFragment) {
         this.context = context;
         this.availableTableList = availableTableList;
-        this.reservationFragment = reservationFragment;  // Gán CategoryFragment
+        this.tableBookingFragment = tableBookingFragment;
     }
 
     @NonNull
@@ -55,7 +55,7 @@ public class TableBookingAdapter extends RecyclerView.Adapter<TableBookingAdapte
             selectedPosition = holder.getAdapterPosition();
             notifyItemChanged(selectedPosition); // Chọn item hiện tại
 
-            reservationFragment.selectedTable(table.getTableId());
+            tableBookingFragment.selectedTable(table.getTableId());
         });
     }
 
