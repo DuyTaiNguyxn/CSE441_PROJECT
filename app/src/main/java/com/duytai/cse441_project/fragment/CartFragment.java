@@ -139,8 +139,6 @@ public class CartFragment extends Fragment {
         bundle.putString("discountCode",discountCode );
         bundle.putDouble("discountPrice", disscountPrice);
         bundle.putDouble("totalPrice", totalPrice);
-        bundle.putSerializable("cartItems", (ArrayList<CartItem>) cartItemList); // Đặt danh sách món ăn
-
         // Gán bundle vào fragment
         confirmOrderFragment.setArguments(bundle);
 
