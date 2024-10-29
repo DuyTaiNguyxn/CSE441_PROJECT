@@ -2,7 +2,9 @@ package com.duytai.cse441_project.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.net.ParseException;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +37,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TableBookingFragment extends Fragment {
 
@@ -49,6 +54,7 @@ public class TableBookingFragment extends Fragment {
     private String locationLink;
     private DatabaseReference reservationRef;
     private DatabaseReference tableInfoRef;
+    private SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -103,34 +109,42 @@ public class TableBookingFragment extends Fragment {
                 return;
             }
 
-            // Lấy reservationId lớn nhất từ Firebase
-            getMaxReservationId(maxId -> {
-                int newId = maxId + 1; // Tăng ID lên 11
-                userId = 0;
+            // Kết hợp date và time thành một chuỗi
+            String reservationDateTime = date + " " + time;
 
-                // Sử dụng Push ID như là reservationId
-                Reservation reservation = new Reservation(
-                        newId,  // Sử dụng ID mới
-                        userId,
-                        selectedTableId,
-                        date,
-                        time,
-                        note
-                );
+            // Kiểm tra xem ngày và giờ có hợp lệ không
+            if (!isDateTimeValid(reservationDateTime)) {
+                Toast.makeText(getContext(), "Ngày giờ không hợp lệ!", Toast.LENGTH_SHORT).show();
+            } else {
+                // Lấy reservationId lớn nhất từ Firebase
+                getMaxReservationId(maxId -> {
+                    int newId = maxId + 1; // Tăng ID lên 1
+                    sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+                    userId = sharedPreferences.getInt("userId", -1);
+                    // Sử dụng Push ID như là reservationId
+                    Reservation reservation = new Reservation(
+                            newId,  // Sử dụng ID mới
+                            userId,
+                            selectedTableId,
+                            date,
+                            time,
+                            note
+                    );
 
-                // Lưu thông tin đặt bàn vào Firebase
-                reservationRef.child(String.valueOf(newId)).setValue(reservation)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                // Khi đặt bàn thành công, cập nhật status của bàn
-                                updateTableStatus(selectedTableId, "occupied");
-                                requireActivity().getSupportFragmentManager().popBackStack();
-                                Toast.makeText(getContext(), "Đặt bàn thành công!", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getContext(), "Đặt bàn thất bại!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            });
+                    // Lưu thông tin đặt bàn vào Firebase
+                    reservationRef.child(String.valueOf(newId)).setValue(reservation)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // Khi đặt bàn thành công, cập nhật status của bàn
+                                    updateTableStatus(selectedTableId, "occupied");
+                                    requireActivity().getSupportFragmentManager().popBackStack();
+                                    Toast.makeText(getContext(), "Đặt bàn thành công!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getContext(), "Đặt bàn thất bại!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                });
+            }
         });
 
         // Thực hiện các thao tác khác trong fragment
@@ -215,6 +229,20 @@ public class TableBookingFragment extends Fragment {
                         Log.d("Reservation", "Cap nhat trạng thái bàn that bai.");
                     }
                 });
+    }
+
+    private boolean isDateTimeValid(String reservationDateTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        try {
+            Date reservationDate = sdf.parse(reservationDateTime);
+            Date currentDate = new Date();
+            return reservationDate.after(currentDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        } catch (java.text.ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
