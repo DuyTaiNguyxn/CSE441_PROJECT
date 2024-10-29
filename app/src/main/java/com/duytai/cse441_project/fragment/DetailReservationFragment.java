@@ -118,7 +118,7 @@ public class DetailReservationFragment extends Fragment {
         }
     }
 
-    private void deleteReservationAndUpdateTableInfo(Reservation reservation) {
+    public void deleteReservationAndUpdateTableInfo(Reservation reservation) {
         DatabaseReference reservationRef = FirebaseDatabase.getInstance().getReference("Reservation")
                 .child(String.valueOf(reservation.getReservationId()));
 
