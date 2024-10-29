@@ -1,6 +1,7 @@
 package com.duytai.cse441_project.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,15 +28,18 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity; // Dùng để lấy FragmentManager
 
 import java.util.List;
+import java.util.Locale;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
     private List<Food> foodList;
     private Context context;
+    private SharedPreferences sharedPreferences;
 
     public FoodAdapter(Context context, List<Food> foodList) {
         this.context = context;
         this.foodList = foodList;
+        this.sharedPreferences = context.getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
     }
 
     @NonNull
@@ -49,7 +53,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
         Food food = foodList.get(position);
         holder.txtFoodName.setText(food.getFoodName());
-        holder.txtFoodPrice.setText(String.format("%.2f VNĐ",food.getPrice()));
+        holder.txtFoodPrice.setText(String.format(Locale.getDefault(), "%.2f VNĐ", food.getPrice()));
 
         // Sử dụng Glide để tải hình ảnh
         Glide.with(context)
@@ -59,12 +63,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         // Khi click vào tên hoặc ảnh sản phẩm
         View.OnClickListener onFoodClickListener = v -> {
             Bundle bundle = new Bundle();
-            bundle.putSerializable("food", food);  //
+            bundle.putSerializable("food", food);
 
             DetailFoodFragment detailFoodFragment = new DetailFoodFragment();
-            detailFoodFragment.setArguments(bundle);// Set dữ liệu vào Fragment
+            detailFoodFragment.setArguments(bundle);
 
-            // Chỉ thay đổi UI khi mở fragment chi tiết sản phẩm
             if (context instanceof FragmentActivity) {
                 FragmentActivity fragmentActivity = (FragmentActivity) context;
 
@@ -74,9 +77,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
                 if (btnBackTopnav != null) {
                     btnBackTopnav.setVisibility(View.VISIBLE);
-                    btnBackTopnav.setOnClickListener(v1 -> {
-                        fragmentActivity.getSupportFragmentManager().popBackStack();
-                    });
+                    btnBackTopnav.setOnClickListener(v1 -> fragmentActivity.getSupportFragmentManager().popBackStack());
                 }
 
                 if (txtAppName != null) {
@@ -92,18 +93,22 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             }
         };
 
-        // Áp dụng sự kiện click cho tên và ảnh sản phẩm
         holder.txtFoodName.setOnClickListener(onFoodClickListener);
         holder.imgFood.setOnClickListener(onFoodClickListener);
 
         // Xử lý khi nhấn nút "Mua"
         holder.btnBuy.setOnClickListener(v -> {
-            int foodId = food.getFoodId();  // foodId là thuộc tính trong đối tượng food
-            int userId = 0;
-//             Gọi hàm addToCart với foodId
-            addToCart(foodId,userId);
+            int foodId = food.getFoodId();
+            int userId = sharedPreferences.getInt("userId", -1); // Lấy userId
+
+            if (userId != -1) {
+                addToCart(foodId, userId);
+            } else {
+                Toast.makeText(context, "Lỗi: Không xác định người dùng. Vui lòng đăng nhập.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -137,18 +142,16 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         databaseReference.child("Cart").orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int cartId;
-
                 if (dataSnapshot.exists()) {
+                    // Nếu đã có giỏ hàng của người dùng, lấy cartId
                     for (DataSnapshot cartSnapshot : dataSnapshot.getChildren()) {
-                        cartId = cartSnapshot.child("cartId").getValue(Integer.class);
+                        int cartId = cartSnapshot.child("cartId").getValue(Integer.class);
                         // Xử lý thêm sản phẩm vào CartItem
                         addFoodToCartItem(cartId, foodId);
-                        return; // Đã xử lý xong
                     }
                 } else {
                     // Nếu không tìm thấy cartId, tạo mới giỏ hàng
-                    cartId = userId; // Sử dụng userId làm cartId
+                    int cartId = userId; // Sử dụng userId làm cartId
                     Cart newCart = new Cart(cartId, userId);
 
                     // Thêm giỏ hàng mới vào Firebase
@@ -171,7 +174,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         });
     }
 
-    // Phương thức để thêm món ăn vào CartItem
+
     private void addFoodToCartItem(int cartId, int foodId) {
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference().child("CartItem");
 
@@ -192,7 +195,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                     // Kiểm tra nếu món ăn đã có
                     if (itemSnapshot.child("foodId").getValue(Integer.class) == foodId) {
                         itemExists = true;
-                        Toast.makeText(context, "Đã có sản phẩm trong giỏ hàng.Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Đã có sản phẩm trong giỏ hàng. Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
                         int quantity = itemSnapshot.child("quantity").getValue(Integer.class);
                         // Tăng số lượng
                         itemSnapshot.getRef().child("quantity").setValue(quantity + 1);
@@ -209,9 +212,9 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                     cartItemRef.child(String.valueOf(cartItemId)).setValue(newItem)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(context, "Thêm món ăn vào giỏ thành công!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Thêm sản phẩm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(context, "Thêm món ăn vào giỏ thất bại!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Thêm sản phẩm vào giỏ hàng thất bại", Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
@@ -223,4 +226,5 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             }
         });
     }
+
 }

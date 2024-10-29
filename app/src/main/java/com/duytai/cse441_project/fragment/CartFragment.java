@@ -2,6 +2,7 @@ package com.duytai.cse441_project.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,8 @@ public class CartFragment extends Fragment {
     private double totalPrice = 0;
     private double discountPercentage = 0;  // Phần trăm giảm giá
     private Context context;
+    private SharedPreferences sharedPreferences;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,11 +92,7 @@ public class CartFragment extends Fragment {
             if (cartItemList.isEmpty()) {
                 Toast.makeText(getContext(), "Giỏ hàng trống. Vui lòng thêm món ăn vào giỏ hàng.", Toast.LENGTH_SHORT).show();
             } else {
-                OrderFragment orderFragment = new OrderFragment();
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerView, orderFragment)
-                        .addToBackStack(null)
-                        .commit();
+                navigateToConfirmOrderFragment();
             }
         });
 
@@ -103,7 +102,6 @@ public class CartFragment extends Fragment {
     private void applyDiscount() {
         double discountPrice = totalPrice * discountPercentage;
         double finalPrice = totalPrice - discountPrice;
-
         txtDiscountPrice.setText(String.valueOf(discountPrice));
         txtTotalPrice.setText(String.valueOf(finalPrice));
     }
@@ -132,9 +130,33 @@ public class CartFragment extends Fragment {
             });
         }
     }
+    // Hàm chuyển dữ liệu từ Cart này sang ComfirmOrder
+    private void navigateToConfirmOrderFragment() {
+        OrderFragment confirmOrderFragment = new OrderFragment();
+        //Chuan hoa du lieu
+        String discountCode = edtDisscount.getText().toString();
+        double disscountPrice = Double.parseDouble(txtDisscountPrice.getText().toString());
+        double totalPrice = Double.parseDouble(txtTotalPrice.getText().toString());
+
+        // Tạo Bundle và thêm dữ liệu vào đó
+        Bundle bundle = new Bundle();
+        bundle.putString("discountCode",discountCode );
+        bundle.putDouble("discountPrice", disscountPrice);
+        bundle.putDouble("totalPrice", totalPrice);
+        // Gán bundle vào fragment
+        confirmOrderFragment.setArguments(bundle);
+
+        // Thực hiện chuyển đổi fragment
+        FragmentManager fragmentManager = getParentFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, confirmOrderFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 
     private void loadCartItems() {
-        int userId = 0;  // Sử dụng ID người dùng thực tế
+        sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem");
 
         cartItemRef.orderByChild("cartId").equalTo(userId).addValueEventListener(new ValueEventListener() {

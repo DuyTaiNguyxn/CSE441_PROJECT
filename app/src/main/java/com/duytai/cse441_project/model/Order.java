@@ -3,26 +3,30 @@ package com.duytai.cse441_project.model;
 public class Order {
     private int orderId;
     private int userId;
-    private long orderDate;
+    private String Ordername;
+    private String Orderphone;
+    private String deliveryAddress;
+    private String orderDate;
     private String status;
     private double totalPrice;
-    private String deliveryAddress;
     private String paymentMethod;
     private String discountCode;
 
-    // Constructor
-    public Order(int orderId, int userId, long orderDate, String status, double totalPrice, String deliveryAddress, String paymentMethod, String discountCode) {
+    public Order(int orderId, int userId, String ordername, String orderphone, String deliveryAddress, String orderDate, String status, double totalPrice, String paymentMethod, String discountCode) {
         this.orderId = orderId;
         this.userId = userId;
+        Ordername = ordername;
+        Orderphone = orderphone;
+        this.deliveryAddress = deliveryAddress;
         this.orderDate = orderDate;
         this.status = status;
         this.totalPrice = totalPrice;
-        this.deliveryAddress = deliveryAddress;
         this.paymentMethod = paymentMethod;
         this.discountCode = discountCode;
     }
 
     // Getter và Setter
+
     public int getOrderId() {
         return orderId;
     }
@@ -39,11 +43,35 @@ public class Order {
         this.userId = userId;
     }
 
-    public long getOrderDate() {
+    public String getOrdername() {
+        return Ordername;
+    }
+
+    public void setOrdername(String ordername) {
+        Ordername = ordername;
+    }
+
+    public String getOrderphone() {
+        return Orderphone;
+    }
+
+    public void setOrderphone(String orderphone) {
+        Orderphone = orderphone;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+    public String getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(long orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 
@@ -61,14 +89,6 @@ public class Order {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
-    }
-
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
     }
 
     public String getPaymentMethod() {

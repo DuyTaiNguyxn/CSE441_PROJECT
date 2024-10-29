@@ -5,14 +5,108 @@
     android:layout_height="match_parent"
     tools:context=".fragment.ProfileFragment">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <!-- Layout chính chứa các thông tin người dùng -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Profile View"
-        android:textAllCaps="true"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="16dp">
 
+        <!-- Ảnh đại diện -->
+        <ImageView
+            android:id="@+id/iv_user_avatar"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Họ tên người dùng -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Họ tên"
+            android:textSize="14sp"
+            android:textColor="#121212" />
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dương Thị Hồng Nhung"
+            android:textSize="20sp"
+            android:textColor="#000000" />
+
+        <!-- Số điện thoại -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Số điện thoại"
+            android:textSize="14sp"
+            android:textColor="#121212" />
+        <TextView
+            android:id="@+id/tv_user_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0123456789"
+            android:textSize="20sp"
+            android:textColor="#000000" />
+
+        <!-- Địa chỉ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Địa chỉ"
+            android:textSize="14sp"
+            android:textColor="#121212" />
+        <TextView
+            android:id="@+id/tv_user_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Địa chỉ của bạn"
+            android:textSize="20sp"
+            android:textColor="#000000" />
+
+        <!-- Mật khẩu (hiển thị chỉ dấu chấm) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Mật khẩu"
+            android:textSize="14sp"
+            android:textColor="#121212" />
+        <TextView
+            android:id="@+id/tv_user_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="••••••••"
+            android:textSize="20sp"
+            android:textColor="#000000" />
+
+        <!-- Nút thay đổi thông tin -->
+        <Button
+            android:id="@+id/btn_edit_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="Thay đổi"
+            android:textSize="16sp"
+            android:textColor="#0F0E0E"
+            android:textStyle="bold" />
+
+        <!-- Nút đăng xuất -->
+        <Button
+            android:id="@+id/btn_log_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="Đăng xuất"
+            android:textSize="16sp"
+            android:textColor="#0F0E0E"
+            android:textStyle="bold" />
+    </LinearLayout>
 </FrameLayout>
