@@ -19,12 +19,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private final Context context;
     private final List<Category> categoryList;
     private final CategoryFragment categoryFragment;
-    private int selectedPosition = -1;
+    private int selectedPosition = 0;
 
     public CategoryAdapter(Context context, List<Category> categoryList, CategoryFragment categoryFragment) {
         this.context = context;
         this.categoryList = categoryList;
         this.categoryFragment = categoryFragment;
+        notifyItemChanged(selectedPosition);
     }
 
     @NonNull
@@ -48,13 +49,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
         // Thiết lập sự kiện click cho item
         holder.itemView.setOnClickListener(v -> {
-            notifyItemChanged(selectedPosition);
-            selectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(selectedPosition);
+            if (selectedPosition != holder.getAdapterPosition()) {
+                notifyItemChanged(selectedPosition);
+                selectedPosition = holder.getAdapterPosition();
+                notifyItemChanged(selectedPosition);
 
-            categoryFragment.loadFoodByCategory(category.getCategoryId()); // Lọc món ăn theo categoryId
+                categoryFragment.loadFoodByCategory(category.getCategoryId()); // Lọc món ăn theo categoryId
+            }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -69,4 +73,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             categoryName = itemView.findViewById(R.id.txt_category_menu);
         }
     }
+
+    // Phương thức để bỏ chọn tất cả các danh mục
+    public void clearSelection() {
+        int previousPosition = selectedPosition;
+        selectedPosition = -1; // Đặt lại giá trị không có danh mục nào được chọn
+        notifyItemChanged(previousPosition); // Cập nhật lại danh mục đã bỏ chọn
+    }
+
 }
