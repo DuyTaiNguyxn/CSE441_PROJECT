@@ -121,8 +121,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             imgFoodCart = itemView.findViewById(R.id.img_food_cart);
-            txtFoodNameCart = itemView.findViewById(R.id.txt_foodName_cart);
-            txtFoodPriceCart = itemView.findViewById(R.id.txt_foodPrice_cart);
+            txtFoodNameCart = itemView.findViewById(R.id.txt_discount_code);
+            txtFoodPriceCart = itemView.findViewById(R.id.txt_discount);
             txtQuantityCart = itemView.findViewById(R.id.txt_quanty_cart);
             btn_add_quantity = itemView.findViewById(R.id.btn_add_cart);
             btn_minus_quantity = itemView.findViewById(R.id.btn_minus_cart);
