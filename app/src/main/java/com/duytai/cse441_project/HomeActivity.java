@@ -71,6 +71,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+
         // Tải HomeFragment làm mặc định khi HomeActivity mở ra
         loadFragment(new HomeFragment(), true);
     }

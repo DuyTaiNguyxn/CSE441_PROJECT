@@ -15,9 +15,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.duytai.cse441_project.HomeActivity;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.adapter.FoodAdapter;
 import com.duytai.cse441_project.model.Food;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -88,12 +90,18 @@ public class HomeFragment extends Fragment {
                     Log.d("HomeFragment", "Search button clicked!");
                     Bundle bundle = new Bundle();
                     bundle.putString("search", search);
-                    Fragment fragment = new CategoryFragment();
-                    fragment.setArguments(bundle);
+                    // Chuyen nav truoc khi thay doi fragment de thay doi nav truoc khi cap nhat du lieu
+                    NavigationBarView bottomNavigationView = ((HomeActivity) getActivity()).findViewById(R.id.bottomNavigationView);
+                    bottomNavigationView.setSelectedItemId(R.id.nav_bottom_directory);
+                    // Thay đổi fragment
+                    Fragment categoryFragment = new CategoryFragment();
+                    categoryFragment.setArguments(bundle);
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragmentContainerView, fragment);
+                    transaction.replace(R.id.fragmentContainerView, categoryFragment);
                     transaction.addToBackStack(null);
                     transaction.commit();
+
+
                 }
             }
         });
