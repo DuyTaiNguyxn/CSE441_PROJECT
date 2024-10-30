@@ -34,11 +34,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class OrderFragment extends Fragment {
     private ImageButton btnBackTopnav;
-    private TextView txtAppName;
+    private TextView txtAppName,txtSelectLocation;
     private Button btnPlaceOrder;
     private DatabaseReference orderRef;
     private EditText edtName, edtPhone, edtAddress;
