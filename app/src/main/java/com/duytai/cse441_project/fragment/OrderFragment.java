@@ -3,6 +3,7 @@ package com.duytai.cse441_project.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.model.CartItem;
@@ -48,6 +50,7 @@ public class OrderFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private long OrderTime;
     private int maxOrderItemId, maxOrderId;
+    private boolean isDataLoaded = false;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_comfirm_order, container, false);
@@ -82,12 +85,16 @@ public class OrderFragment extends Fragment {
         userRef.child(String.valueOf(userId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = snapshot.child("name").getValue(String.class);
-                String phone = snapshot.child("phone").getValue(String.class);
-                String address = snapshot.child("address").getValue(String.class);
-                edtName.setText(name);
-                edtPhone.setText(phone);
-                edtAddress.setText(address);
+                if (!isDataLoaded) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    String phone = snapshot.child("phone").getValue(String.class);
+                    String address = snapshot.child("address").getValue(String.class);
+                    edtName.setText(name);
+                    edtPhone.setText(phone);
+                    edtAddress.setText(address);
+                    isDataLoaded = true;
+                }
+
             }
 
             @Override
@@ -111,9 +118,19 @@ public class OrderFragment extends Fragment {
             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
             SelectLocationFragment selectLocationFragment = new SelectLocationFragment();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, selectLocationFragment) // Thay 'R.id.fragment_container' bằng ID container của bạn
+                    .replace(R.id.fragmentContainerView, selectLocationFragment)
                     .addToBackStack(null)
                     .commit();
+        });
+        // Listen for the fragment result
+        getParentFragmentManager().setFragmentResultListener("location", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                String address = result.getString("location");
+                Log.d("Mapbox", "DataChange: " + address);
+                EditText edtAddress = view.findViewById(R.id.edt_address_order);
+                edtAddress.setText(address);
+            }
         });
 
 
@@ -123,6 +140,19 @@ public class OrderFragment extends Fragment {
             // Xử lý sự kiện nhấn nút "btn_PlaceOrder"
             CreateOrder();
         });
+    }
+    public void onResume() {
+        super.onResume();
+        updateAddressFromBundle();
+    }
+    private void updateAddressFromBundle() {
+        Bundle locationBundle = getArguments();
+        if (locationBundle != null) {
+            String location = locationBundle.getString("location");
+            if (location != null && !location.isEmpty()) {
+                edtAddress.setText(location); // Cập nhật địa chỉ vào edtAddress
+            }
+        }
     }
 
     @Override
@@ -261,7 +291,7 @@ public class OrderFragment extends Fragment {
                 // Quay về Home Fragment
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView, new HomeFragment()) // Thay 'R.id.fragment_container' bằng ID container của bạn
+                        .replace(R.id.fragmentContainerView, new HomeFragment())
                         .commit();
             }
 
