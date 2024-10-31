@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Discount implements Serializable {
     private int discountId;
     private String discountCode;
-    private String discountDescription;
+    private String description;
     private double discountPercentage;
     private String expiryDate;
 
@@ -13,10 +13,10 @@ public class Discount implements Serializable {
     public Discount() {
     }
 
-    public Discount(int discountId, String discountCode, String discountDescription, double discountPercentage, String expiryDate) {
+    public Discount(int discountId, String discountCode, String description, double discountPercentage, String expiryDate) {
         this.discountId = discountId;
         this.discountCode = discountCode;
-        this.discountDescription = discountDescription;
+        this.description = description;
         this.discountPercentage = discountPercentage;
         this.expiryDate = expiryDate;
     }
@@ -37,12 +37,12 @@ public class Discount implements Serializable {
         this.discountCode = discountCode;
     }
 
-    public String getDiscountDescription() {
-        return discountDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDiscountDescription(String discountDescription) {
-        this.discountDescription = discountDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getDiscountPercentage() {
