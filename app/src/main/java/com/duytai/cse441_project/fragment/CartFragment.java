@@ -135,13 +135,13 @@ public class CartFragment extends Fragment {
         OrderFragment confirmOrderFragment = new OrderFragment();
         //Chuan hoa du lieu
         String discountCode = edtDisscount.getText().toString();
-        double disscountPrice = Double.parseDouble(txtDisscountPrice.getText().toString());
+        double discountPrice = Double.parseDouble(txtDiscountPrice.getText().toString());
         double totalPrice = Double.parseDouble(txtTotalPrice.getText().toString());
 
         // Tạo Bundle và thêm dữ liệu vào đó
         Bundle bundle = new Bundle();
         bundle.putString("discountCode",discountCode );
-        bundle.putDouble("discountPrice", disscountPrice);
+        bundle.putDouble("discountPrice", discountPrice);
         bundle.putDouble("totalPrice", totalPrice);
         // Gán bundle vào fragment
         confirmOrderFragment.setArguments(bundle);

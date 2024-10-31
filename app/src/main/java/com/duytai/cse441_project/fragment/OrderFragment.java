@@ -50,6 +50,7 @@ public class OrderFragment extends Fragment {
     private int maxOrderItemId, maxOrderId;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_comfirm_order, container, false);
         // Nhận dữ liệu từ bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -60,7 +61,7 @@ public class OrderFragment extends Fragment {
         cartItems = new ArrayList<>();
         foodList = new ArrayList<>();
 
-        return inflater.inflate(R.layout.fragment_comfirm_order, container, false);
+        return view;
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -70,6 +71,30 @@ public class OrderFragment extends Fragment {
         FragmentActivity fragmentActivity = getActivity();
         ImageButton btnBackTopnav = fragmentActivity.findViewById(R.id.btn_back_Topnav);
         TextView txtAppName = fragmentActivity.findViewById(R.id.txt_app_name);
+        EditText edtName = view.findViewById(R.id.edt_name_comfirm_order);
+        EditText edtPhone = view.findViewById(R.id.edt_phone_comfirm_order);
+        EditText edtAddress = view.findViewById(R.id.edt_address_order);
+        TextView txt_order_select_location = view.findViewById(R.id.txt_order_select_location);
+        // Lấy thông tin người dùng va điền vào form
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("User");
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);
+        userRef.child(String.valueOf(userId)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String name = snapshot.child("name").getValue(String.class);
+                String phone = snapshot.child("phone").getValue(String.class);
+                String address = snapshot.child("address").getValue(String.class);
+                edtName.setText(name);
+                edtPhone.setText(phone);
+                edtAddress.setText(address);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Lỗi khi lấy thông tin người dùng", Toast.LENGTH_SHORT).show();
+            }
+        });
         if (fragmentActivity != null) {
             if (btnBackTopnav != null) {
                 btnBackTopnav.setVisibility(View.VISIBLE);
@@ -81,6 +106,16 @@ public class OrderFragment extends Fragment {
             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
             fragmentManager.popBackStack(); // Quay lại Fragment trước đó
         });
+        txt_order_select_location.setOnClickListener(v -> {
+            // Xử lý sự kiện nhấn nút "txt_order_select_location"
+            FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+            SelectLocationFragment selectLocationFragment = new SelectLocationFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, selectLocationFragment) // Thay 'R.id.fragment_container' bằng ID container của bạn
+                    .addToBackStack(null)
+                    .commit();
+        });
+
 
         // Xử lý sự kiện nhấn nút "btn_PlaceOrder"
         btnPlaceOrder = view.findViewById(R.id.bt_comfirm_order);
