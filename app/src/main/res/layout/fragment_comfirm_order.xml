@@ -86,6 +86,17 @@
                     android:textAlignment="textStart"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/txt_order_select_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Chọn"
+                    android:textAlignment="center"
+                    android:textColor="#03A9F4"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
             </LinearLayout>
         </RelativeLayout>
 

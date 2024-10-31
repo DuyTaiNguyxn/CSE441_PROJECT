@@ -74,6 +74,7 @@ public class OrderFragment extends Fragment {
         EditText edtName = view.findViewById(R.id.edt_name_comfirm_order);
         EditText edtPhone = view.findViewById(R.id.edt_phone_comfirm_order);
         EditText edtAddress = view.findViewById(R.id.edt_address_order);
+        TextView txt_order_select_location = view.findViewById(R.id.txt_order_select_location);
         // Lấy thông tin người dùng va điền vào form
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("User");
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
@@ -104,6 +105,15 @@ public class OrderFragment extends Fragment {
             // Xử lý sự kiện nhấn nút "btn_back_Topnav"
             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
             fragmentManager.popBackStack(); // Quay lại Fragment trước đó
+        });
+        txt_order_select_location.setOnClickListener(v -> {
+            // Xử lý sự kiện nhấn nút "txt_order_select_location"
+            FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+            SelectLocationFragment selectLocationFragment = new SelectLocationFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, selectLocationFragment) // Thay 'R.id.fragment_container' bằng ID container của bạn
+                    .addToBackStack(null)
+                    .commit();
         });
 
 
