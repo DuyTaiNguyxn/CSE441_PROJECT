@@ -46,10 +46,11 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/custom_search_bar"
-            android:ems="10"
+            android:freezesText="false"
             android:hint="Số điện thoại"
             android:inputType="text"
-            android:textAlignment="textStart"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
             android:textStyle="bold" />
 
         <TextView
@@ -76,8 +77,8 @@
                     android:id="@+id/edt_address_order"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="10"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="5"
                     android:background="@null"
                     android:ems="10"
                     android:hint="Địa chỉ"
