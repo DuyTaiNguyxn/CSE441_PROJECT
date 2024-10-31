@@ -72,18 +72,40 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.txtQuantityCart.setText(String.valueOf(cartItem.getQuantity()));
 
         holder.btn_add_quantity.setOnClickListener(v -> {
-            updateCartItemQuantity(cartItem, cartItem.getQuantity() + 1);
+            int quantity = cartItem.getQuantity() + 1;
+            updateCartItemQuantity(cartItem.getCartItemId(), quantity);
         });
-
         holder.btn_minus_quantity.setOnClickListener(v -> {
-            if (cartItem.getQuantity() > 1) {
-                updateCartItemQuantity(cartItem, cartItem.getQuantity() - 1);
+            int quantity = cartItem.getQuantity() - 1;
+            if (quantity > 0) {
+                updateCartItemQuantity(cartItem.getCartItemId(), quantity);
             } else {
-                removeCartItem(cartItem);
+                // Hiển thị dialog xác nhận xóa sản phẩm
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Xác nhận xóa sản phẩm");
+                builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
+                builder.setPositiveButton("Xóa", (dialog, which) -> {
+                    removeCartItem(cartItem.getCartItemId());
+                });
+                builder.setNegativeButton("Hủy", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                builder.create().show();
             }
         });
-
-        holder.btnRemoveItem.setOnClickListener(v -> removeCartItem(cartItem));
+        holder.btnRemoveItem.setOnClickListener(v -> {
+            // Hiển thị dialog xác nhận xóa sản phẩm
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Xác nhận xóa sản phẩm");
+            builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
+            builder.setPositiveButton("Xóa", (dialog, which) -> {
+                removeCartItem(cartItem.getCartItemId());
+            });
+            builder.setNegativeButton("Hủy", (dialog, which) -> {
+                dialog.dismiss();
+            });
+            builder.create().show();
+        });
     }
 
     @Override
@@ -91,28 +113,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItemList.size();
     }
 
-    private void updateCartItemQuantity(CartItem cartItem, int newQuantity) {
-        DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem")
-                .child(String.valueOf(cartItem.getCartItemId()));
-        cartItemRef.child("quantity").setValue(newQuantity).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                cartItem.setQuantity(newQuantity);
-                updateCartCallback.run();  // Gọi callback để cập nhật giỏ hàng
-            }
-        });
-    }
-
-    private void removeCartItem(CartItem cartItem) {
-        DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem")
-                .child(String.valueOf(cartItem.getCartItemId()));
-        cartItemRef.removeValue().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                cartItemList.remove(cartItem);
-                notifyDataSetChanged();
-                updateCartCallback.run();  // Gọi callback để cập nhật giỏ hàng
-            }
-        });
-    }
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {
         TextView txtFoodNameCart, txtFoodPriceCart, txtQuantityCart;
