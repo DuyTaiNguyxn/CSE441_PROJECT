@@ -3,8 +3,9 @@ package com.duytai.cse441_project.model;
 public class Order {
     private int orderId;
     private int userId;
-    private String Ordername;
-    private String Orderphone;
+    private String orderName;
+    private String orderPhone;
+
     private String deliveryAddress;
     private String orderDate;
     private String status;
@@ -12,11 +13,16 @@ public class Order {
     private String paymentMethod;
     private String discountCode;
 
-    public Order(int orderId, int userId, String ordername, String orderphone, String deliveryAddress, String orderDate, String status, double totalPrice, String paymentMethod, String discountCode) {
+    public Order() {
+        // Constructor rỗng
+    }
+
+
+    public Order(int orderId, int userId, String orderName, String orderPhone, String deliveryAddress, String orderDate, String status, double totalPrice, String paymentMethod, String discountCode) {
         this.orderId = orderId;
         this.userId = userId;
-        Ordername = ordername;
-        Orderphone = orderphone;
+        this.orderName = orderName;
+        this.orderPhone = orderPhone;
         this.deliveryAddress = deliveryAddress;
         this.orderDate = orderDate;
         this.status = status;
@@ -24,6 +30,7 @@ public class Order {
         this.paymentMethod = paymentMethod;
         this.discountCode = discountCode;
     }
+
 
     // Getter và Setter
 
@@ -43,20 +50,20 @@ public class Order {
         this.userId = userId;
     }
 
-    public String getOrdername() {
-        return Ordername;
+    public String getOrderName() {
+        return orderName;
     }
 
-    public void setOrdername(String ordername) {
-        Ordername = ordername;
+    public void setOrderName(String orderName) {
+        this.orderName = orderName;
     }
 
-    public String getOrderphone() {
-        return Orderphone;
+    public String getOrderPhone() {
+        return orderPhone;
     }
 
-    public void setOrderphone(String orderphone) {
-        Orderphone = orderphone;
+    public void setOrderPhone(String orderPhone) {
+        this.orderPhone = orderPhone;
     }
 
     public String getDeliveryAddress() {

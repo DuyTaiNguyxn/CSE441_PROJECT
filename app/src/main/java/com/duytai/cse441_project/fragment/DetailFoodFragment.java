@@ -70,7 +70,6 @@ public class DetailFoodFragment extends Fragment {
           btn_add_detail = view.findViewById(R.id.btn_add_detail);
           btnAddToCart = view.findViewById(R.id.btn_buy_detail);
 
-
             // Kiểm tra null trước khi set giá trị
             if (txtFoodName != null) {
                 txtFoodName.setText(food.getFoodName());
@@ -236,6 +235,7 @@ public class DetailFoodFragment extends Fragment {
             }
         });
     }
+
 
 
 

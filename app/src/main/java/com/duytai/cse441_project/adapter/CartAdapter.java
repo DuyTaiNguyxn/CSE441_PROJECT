@@ -2,7 +2,6 @@ package com.duytai.cse441_project.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.fragment.CartFragment;
+import com.duytai.cse441_project.fragment.OrderViewFragment;
 import com.duytai.cse441_project.model.CartItem;
 import com.duytai.cse441_project.model.Food;
 import com.google.firebase.database.DataSnapshot;
@@ -120,7 +120,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         cartItemRef.child("quantity").setValue(newQuantity).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 cartItem.setQuantity(newQuantity);
-                //cartFragment.loadCartItems();
             }
         });
     }
@@ -144,8 +143,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             imgFoodCart = itemView.findViewById(R.id.img_food_cart);
-            txtFoodNameCart = itemView.findViewById(R.id.txt_discount_code);
-            txtFoodPriceCart = itemView.findViewById(R.id.txt_discount);
+            txtFoodNameCart = itemView.findViewById(R.id.Txt_order1);
+            txtFoodPriceCart = itemView.findViewById(R.id.txt_order2);
             txtQuantityCart = itemView.findViewById(R.id.txt_quanty_cart);
             btn_add_quantity = itemView.findViewById(R.id.btn_add_cart);
             btn_minus_quantity = itemView.findViewById(R.id.btn_minus_cart);
