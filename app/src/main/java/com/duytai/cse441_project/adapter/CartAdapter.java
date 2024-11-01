@@ -74,19 +74,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         holder.btn_add_quantity.setOnClickListener(v -> {
             int quantity = cartItem.getQuantity() + 1;
-            updateCartItemQuantity(cartItem.getCartItemId(), quantity);
+            updateCartItemQuantity(cartItem, quantity);
         });
         holder.btn_minus_quantity.setOnClickListener(v -> {
             int quantity = cartItem.getQuantity() - 1;
             if (quantity > 0) {
-                updateCartItemQuantity(cartItem.getCartItemId(), quantity);
+                updateCartItemQuantity(cartItem, quantity);
             } else {
                 // Hiển thị dialog xác nhận xóa sản phẩm
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Xác nhận xóa sản phẩm");
                 builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
                 builder.setPositiveButton("Xóa", (dialog, which) -> {
-                    removeCartItem(cartItem.getCartItemId());
+                    removeCartItem(cartItem);
                 });
                 builder.setNegativeButton("Hủy", (dialog, which) -> {
                     dialog.dismiss();
@@ -100,7 +100,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             builder.setTitle("Xác nhận xóa sản phẩm");
             builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
             builder.setPositiveButton("Xóa", (dialog, which) -> {
-                removeCartItem(cartItem.getCartItemId());
+                removeCartItem(cartItem);
             });
             builder.setNegativeButton("Hủy", (dialog, which) -> {
                 dialog.dismiss();
