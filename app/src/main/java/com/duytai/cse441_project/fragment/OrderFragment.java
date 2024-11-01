@@ -112,6 +112,7 @@ public class OrderFragment extends Fragment {
             // Xử lý sự kiện nhấn nút "btn_back_Topnav"
             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
             fragmentManager.popBackStack(); // Quay lại Fragment trước đó
+            btnBackTopnav.setVisibility(View.GONE); // Ẩn nút "btn_back_Topnav"
         });
         txt_order_select_location.setOnClickListener(v -> {
             // Xử lý sự kiện nhấn nút "txt_order_select_location"
