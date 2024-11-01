@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password);
         tvPhoneError = findViewById(R.id.tv_phone_error);
         tvPasswordError = findViewById(R.id.tv_password_error);
+        Button btnRegister = findViewById(R.id.btn_register);
+
+        //sự kiện khởi chạy RegisterActivity khi nhấn btn đăng kí
+        btnRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+
 
         // Thiết lập lắng nghe sự kiện nhấn nút đăng nhập
         btn_login.setOnClickListener(v -> {
@@ -110,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Thông báo nếu có lỗi kết nối đến Firebase
-                Toast.makeText(MainActivity.this, "Lỗi kết nối đến Firebase", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Kết nối tới cơ sở dữ liệu thất bại!", Toast.LENGTH_SHORT).show();
             }
         });
     }

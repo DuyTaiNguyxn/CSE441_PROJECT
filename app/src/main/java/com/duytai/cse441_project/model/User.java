@@ -8,13 +8,12 @@ public class User {
     private String address;
     private String role;
     private String avatar_img_url;
+    private String name;
     private int rewardPoints;
 
-    public User() {
-        // Constructor mặc định
-    }
 
-    public User(int userId, String phone, String password, String address, String email, String role, String avatar_img_url,int rewardPoints) {
+    public User(String address, String avatar_img_url, String email, String name, String password, String phone,int rewardPoints, String role,  int userId) {
+        this.name = name;
         this.userId = userId;
         this.phone = phone;
         this.password = password;
@@ -23,7 +22,6 @@ public class User {
         this.role = role;
         this.avatar_img_url = avatar_img_url;
         this.rewardPoints = rewardPoints;
-
     }
 
     public int getUserId() {
@@ -56,6 +54,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAddress() {
