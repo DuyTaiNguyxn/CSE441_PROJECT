@@ -73,18 +73,40 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.txtQuantityCart.setText(String.valueOf(cartItem.getQuantity()));
 
         holder.btn_add_quantity.setOnClickListener(v -> {
-            updateCartItemQuantity(cartItem, cartItem.getQuantity() + 1);
+            int quantity = cartItem.getQuantity() + 1;
+            updateCartItemQuantity(cartItem.getCartItemId(), quantity);
         });
-
         holder.btn_minus_quantity.setOnClickListener(v -> {
-            if (cartItem.getQuantity() > 1) {
-                updateCartItemQuantity(cartItem, cartItem.getQuantity() - 1);
+            int quantity = cartItem.getQuantity() - 1;
+            if (quantity > 0) {
+                updateCartItemQuantity(cartItem.getCartItemId(), quantity);
             } else {
-                removeCartItem(cartItem);
+                // Hiển thị dialog xác nhận xóa sản phẩm
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Xác nhận xóa sản phẩm");
+                builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
+                builder.setPositiveButton("Xóa", (dialog, which) -> {
+                    removeCartItem(cartItem.getCartItemId());
+                });
+                builder.setNegativeButton("Hủy", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                builder.create().show();
             }
         });
-
-        holder.btnRemoveItem.setOnClickListener(v -> removeCartItem(cartItem));
+        holder.btnRemoveItem.setOnClickListener(v -> {
+            // Hiển thị dialog xác nhận xóa sản phẩm
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Xác nhận xóa sản phẩm");
+            builder.setMessage("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
+            builder.setPositiveButton("Xóa", (dialog, which) -> {
+                removeCartItem(cartItem.getCartItemId());
+            });
+            builder.setNegativeButton("Hủy", (dialog, which) -> {
+                dialog.dismiss();
+            });
+            builder.create().show();
+        });
     }
 
     @Override
@@ -122,8 +144,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             imgFoodCart = itemView.findViewById(R.id.img_food_cart);
-            txtFoodNameCart = itemView.findViewById(R.id.txt_foodName_cart);
-            txtFoodPriceCart = itemView.findViewById(R.id.txt_foodPrice_cart);
+            txtFoodNameCart = itemView.findViewById(R.id.txt_discount_code);
+            txtFoodPriceCart = itemView.findViewById(R.id.txt_discount);
             txtQuantityCart = itemView.findViewById(R.id.txt_quanty_cart);
             btn_add_quantity = itemView.findViewById(R.id.btn_add_cart);
             btn_minus_quantity = itemView.findViewById(R.id.btn_minus_cart);

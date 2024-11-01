@@ -1,8 +1,10 @@
 package com.duytai.cse441_project;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton btn_back_Topnav; // Nút back
     private TextView txt_app_name; // Tên ứng dụng
 
+
+    @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         btn_back_Topnav = findViewById(R.id.btn_back_Topnav);
         txt_app_name = findViewById(R.id.txt_app_name);
-
         // Tiêu thụ toàn bộ insets cho BottomNavigationView để tránh tác động lên các view khác
         ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView, (v, insets) -> {
             return WindowInsetsCompat.CONSUMED;
@@ -67,6 +70,7 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
+
 
         // Tải HomeFragment làm mặc định khi HomeActivity mở ra
         loadFragment(new HomeFragment(), true);

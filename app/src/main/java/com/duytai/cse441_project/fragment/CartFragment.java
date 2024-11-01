@@ -131,7 +131,6 @@ public class CartFragment extends Fragment {
                 });
             }
         }
-
     }
 
     public void loadCartItems() {
