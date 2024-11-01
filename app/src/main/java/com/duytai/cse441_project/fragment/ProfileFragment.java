@@ -2,6 +2,7 @@ package com.duytai.cse441_project.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,16 +12,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.squareup.picasso.Picasso;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.duytai.cse441_project.MainActivity;
 import com.duytai.cse441_project.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
@@ -53,6 +57,9 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "Không tìm thấy userId", Toast.LENGTH_SHORT).show();
         }
+
+        // Xử lý sự kiện khi nhấn nút đăng xuất
+        btnLogOut.setOnClickListener(view1 -> showLogoutConfirmation());
 
         return view;
     }
@@ -99,5 +106,29 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "Lỗi kết nối đến Firebase", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // Hiển thị hộp thoại xác nhận đăng xuất
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có chắc chắn muốn đăng xuất không?")
+                .setPositiveButton("Có", (dialog, which) -> logOutUser())
+                .setNegativeButton("Không", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    // Xử lý đăng xuất
+    private void logOutUser() {
+        // Xóa userId khỏi SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("userId");
+        editor.apply();
+
+        // Chuyển sang màn hình đăng nhập
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        requireActivity().finish(); // Đóng màn hình hiện tại
     }
 }

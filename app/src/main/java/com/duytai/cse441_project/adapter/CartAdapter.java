@@ -74,7 +74,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         holder.btn_add_quantity.setOnClickListener(v -> {
             int quantity = cartItem.getQuantity() + 1;
-            updateCartItemQuantity(cartItem ,quantity);
+            updateCartItemQuantity(cartItem, quantity);
         });
         holder.btn_minus_quantity.setOnClickListener(v -> {
             int quantity = cartItem.getQuantity() - 1;

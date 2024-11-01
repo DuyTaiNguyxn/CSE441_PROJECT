@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        boolean isValid = true;
+
         // Lấy SharedPreferences để lưu userId của người dùng hiện tại
         sharedPreferences = getSharedPreferences("currentUserId", MODE_PRIVATE);
 
@@ -72,7 +74,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Đặt TextWatcher cho số điện thoại và mật khẩu để kiểm tra tính hợp lệ
+        if (TextUtils.isEmpty(etPhoneNumber.getText().toString())) {
+            tvPhoneError.setText("Vui lòng nhập số điện thoại");
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPhoneError.setVisibility(View.GONE);
+        }
+
         etPhoneNumber.addTextChangedListener(new SimpleTextWatcher(etPhoneNumber, tvPhoneError));
+        if (TextUtils.isEmpty(etPassword.getText().toString())) {
+            tvPasswordError.setText("Vui lòng nhập mật khẩu");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPasswordError.setVisibility(View.GONE);
+        }
         etPassword.addTextChangedListener(new SimpleTextWatcher(etPassword, tvPasswordError));
     }
 
