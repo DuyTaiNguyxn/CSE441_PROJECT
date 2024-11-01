@@ -178,38 +178,41 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     private void addFoodToCartItem(int cartId, int foodId) {
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference().child("CartItem");
 
-        // Kiểm tra nếu món ăn đã có trong giỏ
-        cartItemRef.orderByChild("cartId").equalTo(cartId).addListenerForSingleValueEvent(new ValueEventListener() {
+        // Kiểm tra nếu CartItem đã tồn tại dựa trên cartId và foodId
+        cartItemRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot cartItemSnapshot) {
                 boolean itemExists = false;
-                int cartItemId = 0;
+                int maxCartItemId = 0;
 
-                // Lấy cartItemId lớn nhất
+                // Duyệt qua tất cả các mục trong CartItem để tìm maxCartItemId và kiểm tra tồn tại
                 for (DataSnapshot itemSnapshot : cartItemSnapshot.getChildren()) {
-                    int currentItemId = itemSnapshot.child("cartItemId").getValue(Integer.class);
-                    if (currentItemId > cartItemId) {
-                        cartItemId = currentItemId; //
+                    Integer currentCartId = itemSnapshot.child("cartId").getValue(Integer.class);
+                    Integer currentFoodId = itemSnapshot.child("foodId").getValue(Integer.class);
+                    Integer currentCartItemId = itemSnapshot.child("cartItemId").getValue(Integer.class);
+
+                    // Cập nhật maxCartItemId để tạo ID mới nếu cần
+                    if (currentCartItemId != null && currentCartItemId > maxCartItemId) {
+                        maxCartItemId = currentCartItemId;
                     }
 
-                    // Kiểm tra nếu món ăn đã có
-                    if (itemSnapshot.child("foodId").getValue(Integer.class) == foodId) {
+                    // Kiểm tra nếu cả cartId và foodId trùng nhau trong CartItem
+                    if (currentCartId != null && currentFoodId != null && currentCartId == cartId && currentFoodId == foodId) {
                         itemExists = true;
-                        Toast.makeText(context, "Đã có sản phẩm trong giỏ hàng. Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
                         int quantity = itemSnapshot.child("quantity").getValue(Integer.class);
-                        // Tăng số lượng
-                        itemSnapshot.getRef().child("quantity").setValue(quantity + 1);
+                        itemSnapshot.getRef().child("quantity").setValue(quantity + 1); // Tăng số lượng cho CartItem đã tồn tại
+                        Toast.makeText(context, "Đã có sản phẩm trong giỏ hàng. Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }
 
-                // Nếu món ăn chưa có trong giỏ, thêm mới
+                // Nếu không tồn tại item với cartId và foodId, tạo CartItem mới
                 if (!itemExists) {
-                    cartItemId++; // Tăng cartItemId lên 1
-                    // Tạo đối tượng CartItem mới
-                    CartItem newItem = new CartItem(cartItemId, cartId, foodId, 1);
-                    // Thêm mới vào CartItem
-                    cartItemRef.child(String.valueOf(cartItemId)).setValue(newItem)
+                    int newCartItemId = maxCartItemId + 1;  // Tạo ID mới cho CartItem
+                    CartItem newItem = new CartItem(newCartItemId, cartId, foodId, 1); // Số lượng bắt đầu là 1
+
+                    // Thêm CartItem mới vào database
+                    cartItemRef.child(String.valueOf(newCartItemId)).setValue(newItem)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(context, "Thêm sản phẩm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show();
@@ -221,10 +224,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("TAG", "Error reading CartItem: ", databaseError.toException());
+            public void onCancelled(DatabaseError error) {
+                Log.w("TAG", "Error reading CartItem: ", error.toException());
             }
         });
     }
+
 
 }

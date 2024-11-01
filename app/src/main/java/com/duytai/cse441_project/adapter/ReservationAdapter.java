@@ -7,13 +7,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.net.ParseException;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.model.Reservation;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ReservationViewHolder> {
 
@@ -45,8 +49,17 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                 .error(R.drawable.logo)
                 .into(holder.imgStore);
 
-        // Thiết lập sự kiện
-        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(reservation));
+        // Thiết lập sự kiện nhấp vào item
+        holder.itemView.setOnClickListener(v -> {
+            String reservationDateTime = reservation.getReservationDate() + " " + reservation.getReservationTime();
+            if (isReservationExpired(reservationDateTime)) {
+                // Nếu đặt chỗ đã hết hạn, gọi sự kiện hủy đặt chỗ
+                onItemClickListener.onCancelReservation(reservation);
+            } else {
+                // Nếu chưa hết hạn, gọi sự kiện xem chi tiết
+                onItemClickListener.onItemClick(reservation);
+            }
+        });
     }
 
     @Override
@@ -70,5 +83,21 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
     public interface OnItemClickListener {
         void onItemClick(Reservation reservation);
+        void onCancelReservation(Reservation reservation); // Thêm phương thức cho hủy đặt chỗ
     }
+
+    public boolean isReservationExpired(String reservationDateTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        try {
+            Date reservationDate = sdf.parse(reservationDateTime);
+            Date currentDate = new Date();
+            return reservationDate.before(currentDate); // Kiểm tra xem đặt chỗ đã hết hạn chưa
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false; // Hoặc xử lý theo cách khác nếu có lỗi
+        } catch (java.text.ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
