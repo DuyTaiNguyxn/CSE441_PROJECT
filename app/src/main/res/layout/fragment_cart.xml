@@ -86,15 +86,14 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/edt_discount_code"
+            <TextView
+                android:id="@+id/txt_discount_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:hint="Mã giảm giá"
-                android:inputType="text"
+                android:layout_marginEnd="5dp"
+                android:textColor="#000000"
+                android:textSize="18sp"
                 android:textAlignment="viewEnd"
                 android:textStyle="bold" />
 
@@ -173,7 +172,7 @@
                 android:text=""
                 android:textAlignment="textEnd"
                 android:textColor="@color/app_color"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.duytai.cse441_project.R;
+import com.duytai.cse441_project.fragment.CartFragment;
 import com.duytai.cse441_project.model.CartItem;
 import com.duytai.cse441_project.model.Food;
 import com.google.firebase.database.DataSnapshot;
@@ -27,12 +28,12 @@ import java.util.List;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CartItem> cartItemList;
     private Context context;
-    private Runnable updateCartCallback;
+    private CartFragment cartFragment;
 
-    public CartAdapter(Context context, List<CartItem> cartItemList, Runnable updateCartCallback) {
+    public CartAdapter(Context context, List<CartItem> cartItemList, CartFragment cartFragment) {
         this.context = context;
         this.cartItemList = cartItemList;
-        this.updateCartCallback = updateCartCallback;  // Callback để cập nhật giỏ hàng
+        this.cartFragment = cartFragment;
     }
 
     @NonNull
@@ -113,6 +114,27 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItemList.size();
     }
 
+    private void updateCartItemQuantity(CartItem cartItem, int newQuantity) {
+        DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem")
+                .child(String.valueOf(cartItem.getCartItemId()));
+        cartItemRef.child("quantity").setValue(newQuantity).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                cartItem.setQuantity(newQuantity);
+                //cartFragment.loadCartItems();
+            }
+        });
+    }
+
+    private void removeCartItem(CartItem cartItem) {
+        DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem")
+                .child(String.valueOf(cartItem.getCartItemId()));
+        cartItemRef.removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                cartItemList.remove(cartItem);
+                notifyDataSetChanged();
+            }
+        });
+    }
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {
         TextView txtFoodNameCart, txtFoodPriceCart, txtQuantityCart;
@@ -130,33 +152,4 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             btnRemoveItem = itemView.findViewById(R.id.btn_remove_food_cart);
         }
     }
-
-    private void updateCartItemQuantity(int cartItemId, int quantity) {
-        DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem").child(String.valueOf(cartItemId));
-        cartItemRef.child("quantity").setValue(quantity)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(context, "Cập nhật số lượng thành công.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Cập nhật số lượng thất bại.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void removeCartItem(int cartItemId) {
-        DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem").child(String.valueOf(cartItemId));
-        cartItemRef.removeValue()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Xóa thành công
-                        cartItemList.removeIf(item -> item.getCartItemId() == cartItemId);
-                        notifyDataSetChanged();
-                    } else {
-                        Log.w("TAG", "Xóa sản phẩm thất bại.");
-                        Toast.makeText(context, "Xóa sản phẩm thất bại.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
 }
-

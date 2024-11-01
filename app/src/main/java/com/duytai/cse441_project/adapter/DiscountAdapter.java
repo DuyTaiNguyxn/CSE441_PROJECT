@@ -38,7 +38,7 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Discount discount = discountList.get(position);
         holder.discountCode.setText(discount.getDiscountCode());
-        holder.discountDescription.setText(discount.getDiscountDescription());
+        holder.discountDescription.setText(discount.getDescription());
 
         // Cập nhật giao diện dựa trên trạng thái được chọn
         holder.itemView.setBackground(context.getDrawable(

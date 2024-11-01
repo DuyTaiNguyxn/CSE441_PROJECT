@@ -1,6 +1,9 @@
 package com.duytai.cse441_project.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.adapter.DiscountAdapter;
 import com.duytai.cse441_project.model.Discount;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +31,7 @@ public class DiscountFragment extends Fragment {
     private List<Discount> discountList = new ArrayList<>();
     private Button btnConfirmDiscount;
     private int selectedDiscountId;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -31,9 +40,9 @@ public class DiscountFragment extends Fragment {
         rcvDiscount = view.findViewById(R.id.rcv_discount);
         rcvDiscount.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
 
-        discountList.add( new Discount(1,"NEW20","Giảm 20% cho đơn hàng mới", 0.2,"11/11/2024"));
-        discountList.add( new Discount(2,"NEW30","Giảm 20% cho đơn hàng mới", 0.3,"11/11/2024"));
-        discountList.add( new Discount(3,"NEW40","Giảm 20% cho đơn hàng mới", 0.4,"11/11/2024"));
+        sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);
+        loadDiscountsForUser(userId);
         discountAdapter = new DiscountAdapter(this.getContext(),discountList, this);
         rcvDiscount.setAdapter(discountAdapter);
 
@@ -59,6 +68,54 @@ public class DiscountFragment extends Fragment {
             }
         }
         return null;  // Trả về null nếu không tìm thấy
+    }
+
+    private void loadDiscountsForUser(int userId) {
+        DatabaseReference userDiscountRef = FirebaseDatabase.getInstance().getReference("User-Discount");
+
+        userDiscountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                discountList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Long snapshotUserId = snapshot.child("userId").getValue(Long.class);
+                    if (snapshotUserId != null && snapshotUserId.intValue() == userId) {  // Kiểm tra userId
+                        Long discountIdLong = snapshot.child("discountId").getValue(Long.class);
+                        if (discountIdLong != null) {  // Kiểm tra discountId không phải là null
+                            int discountId = discountIdLong.intValue();  // Chuyển đổi Long thành int
+                            loadDiscountDetails(discountId);  // Truyền discountId dưới dạng int
+                        } else {
+                            Log.e("DiscountFragment", "Discount ID is null for user " + userId);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("DiscountFragment", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void loadDiscountDetails(int discountId) {
+        DatabaseReference discountRef = FirebaseDatabase.getInstance().getReference("Discount").child(String.valueOf(discountId));
+
+        discountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Discount discount = dataSnapshot.getValue(Discount.class);
+                if (discount != null) {
+                    discountList.add(discount);  // Thêm discount vào danh sách
+                    discountAdapter.notifyDataSetChanged();  // Cập nhật adapter
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Xử lý lỗi nếu có
+            }
+        });
     }
 
 }

@@ -1,7 +1,5 @@
 package com.duytai.cse441_project.fragment;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -15,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +21,6 @@ import com.duytai.cse441_project.adapter.CartAdapter;
 import com.duytai.cse441_project.model.CartItem;
 import com.duytai.cse441_project.model.Discount;
 import com.duytai.cse441_project.model.Food;
-import com.duytai.cse441_project.model.Order;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,10 +35,9 @@ public class CartFragment extends Fragment {
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
     private List<CartItem> cartItemList;
-    private TextView txtTotalPrice, txtTempPrice, txtSelectDisscount, txtDiscountPrice;
-    private EditText edtDisscount;
-    private Button btn_PlaceOrder;
-    private double totalPrice = 0;
+    private TextView txtTotalPrice, txtTempPrice, txtSelectDiscount, txtDiscountPrice, txtDiscountCode;
+    private Button btnPlaceOrder;
+    private double tempPrice = 0;
     private double discountPercentage = 0;  // Phần trăm giảm giá
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -56,20 +51,20 @@ public class CartFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         cartItemList = new ArrayList<>();
-        cartAdapter = new CartAdapter(requireContext(), cartItemList, this::updateCart);  // Truyền callback
+        cartAdapter = new CartAdapter(requireContext(), cartItemList, this);
         recyclerView.setAdapter(cartAdapter);
 
         txtTotalPrice = view.findViewById(R.id.txt_total_price);
         txtTempPrice = view.findViewById(R.id.txt_temp_price);
         txtDiscountPrice = view.findViewById(R.id.txt_discount_price);
-        txtSelectDisscount = view.findViewById(R.id.txt_select_discount);
-        edtDisscount = view.findViewById(R.id.edt_discount_code);
-        btn_PlaceOrder = view.findViewById(R.id.btn_OrderFood);
+        txtSelectDiscount = view.findViewById(R.id.txt_select_discount);
+        txtDiscountCode = view.findViewById(R.id.txt_discount_code);
+        btnPlaceOrder = view.findViewById(R.id.btn_OrderFood);
 
         loadCartItems();
 
         // Xử lý chọn mã giảm giá
-        txtSelectDisscount.setOnClickListener(v -> {
+        txtSelectDiscount.setOnClickListener(v -> {
             DiscountFragment discountFragment = new DiscountFragment();
             requireActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainerView, discountFragment)
@@ -81,14 +76,16 @@ public class CartFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener("requestKey", this, (requestKey, result) -> {
             Discount discount = (Discount) result.getSerializable("selectedDiscount");
             if (discount != null) {
-                edtDisscount.setText(discount.getDiscountCode());
+                txtDiscountCode.setText(discount.getDiscountCode());
                 discountPercentage = discount.getDiscountPercentage();
-                applyDiscount();  // Áp dụng giảm giá ngay
+            } else {
+                txtDiscountCode.setText("");
+                discountPercentage = 0;
             }
         });
 
         // Xử lý nút đặt hàng
-        btn_PlaceOrder.setOnClickListener(v -> {
+        btnPlaceOrder.setOnClickListener(v -> {
             if (cartItemList.isEmpty()) {
                 Toast.makeText(getContext(), "Giỏ hàng trống. Vui lòng thêm món ăn vào giỏ hàng.", Toast.LENGTH_SHORT).show();
             } else {
@@ -100,61 +97,43 @@ public class CartFragment extends Fragment {
     }
 
     private void applyDiscount() {
-        double discountPrice = totalPrice * discountPercentage;
-        double finalPrice = totalPrice - discountPrice;
+        double discountPrice = tempPrice * discountPercentage;
+        double finalPrice = tempPrice - discountPrice;
         txtDiscountPrice.setText(String.valueOf(discountPrice));
         txtTotalPrice.setText(String.valueOf(finalPrice));
     }
 
     private void updateCart() {
-        totalPrice = 0;  // Reset tổng giá
-        for (CartItem item : cartItemList) {
-            DatabaseReference foodRef = FirebaseDatabase.getInstance().getReference("Food")
-                    .child(String.valueOf(item.getFoodId()));
+        tempPrice = 0;  // Reset tổng giá
+        if (cartItemList.isEmpty()) {
+            txtTotalPrice.setText("0");
+            txtTempPrice.setText("0");
+        } else {
+            for (CartItem item : cartItemList) {
+                DatabaseReference foodRef = FirebaseDatabase.getInstance().getReference("Food")
+                        .child(String.valueOf(item.getFoodId()));
 
-            foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Food food = snapshot.getValue(Food.class);
-                    if (food != null) {
-                        totalPrice += food.getPrice() * item.getQuantity();
-                        txtTempPrice.setText(String.valueOf(totalPrice));
-                        applyDiscount();  // Áp dụng giảm giá sau khi cập nhật giá
+                foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Food food = snapshot.getValue(Food.class);
+                        if (food != null) {
+                            tempPrice += food.getPrice() * item.getQuantity();
+                            txtTempPrice.setText(String.valueOf(tempPrice));
+                            applyDiscount();
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(context, "Lỗi khi tính tổng tiền.", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(context, "Lỗi khi tính tổng tiền.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
-    // Hàm chuyển dữ liệu từ Cart này sang ComfirmOrder
-    private void navigateToConfirmOrderFragment() {
-        OrderFragment confirmOrderFragment = new OrderFragment();
-        //Chuan hoa du lieu
-        String discountCode = edtDisscount.getText().toString();
-        double discountPrice = Double.parseDouble(txtDiscountPrice.getText().toString());
-        double totalPrice = Double.parseDouble(txtTotalPrice.getText().toString());
 
-        // Tạo Bundle và thêm dữ liệu vào đó
-        Bundle bundle = new Bundle();
-        bundle.putString("discountCode",discountCode );
-        bundle.putDouble("discountPrice", discountPrice);
-        bundle.putDouble("totalPrice", totalPrice);
-        // Gán bundle vào fragment
-        confirmOrderFragment.setArguments(bundle);
-
-        // Thực hiện chuyển đổi fragment
-        FragmentManager fragmentManager = getParentFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, confirmOrderFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private void loadCartItems() {
+    public void loadCartItems() {
         sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
         int userId = sharedPreferences.getInt("userId", -1);
         DatabaseReference cartItemRef = FirebaseDatabase.getInstance().getReference("CartItem");
@@ -178,5 +157,29 @@ public class CartFragment extends Fragment {
                 Toast.makeText(context, "Lỗi khi tải giỏ hàng.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // Hàm chuyển dữ liệu từ Cart này sang ComfirmOrder
+    private void navigateToConfirmOrderFragment() {
+        OrderFragment confirmOrderFragment = new OrderFragment();
+        //Chuan hoa du lieu
+        String discountCode = txtDiscountCode.getText().toString();
+        double discountPrice = Double.parseDouble(txtDiscountPrice.getText().toString());
+        double totalPrice = Double.parseDouble(txtTotalPrice.getText().toString());
+
+        // Tạo Bundle và thêm dữ liệu vào đó
+        Bundle bundle = new Bundle();
+        bundle.putString("discountCode",discountCode );
+        bundle.putDouble("discountPrice", discountPrice);
+        bundle.putDouble("totalPrice", totalPrice);
+        // Gán bundle vào fragment
+        confirmOrderFragment.setArguments(bundle);
+
+        // Thực hiện chuyển đổi fragment
+        FragmentManager fragmentManager = getParentFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, confirmOrderFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
