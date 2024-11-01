@@ -56,5 +56,6 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
     implementation ("com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.2")
+    implementation ("com.google.android.gms:play-services-wallet:18.0.0")
 
 }

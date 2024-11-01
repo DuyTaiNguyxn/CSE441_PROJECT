@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:scaleType="centerCrop"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@drawable/logo" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -30,14 +30,30 @@
             android:layout_weight="3"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/Txt_order1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cánh gà rán"
-                android:textAlignment="viewStart"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/Txt_order1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mã đơn hàng: "
+                    android:textAlignment="viewStart"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_order_detail_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="4"
+                    android:textAlignment="textStart"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,7 +64,7 @@
                     android:id="@+id/txt_order2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="20000"
+                    android:text="Trạng thái:"
                     android:textAlignment="viewStart"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -61,56 +77,33 @@
                     android:textAlignment="viewEnd"
                     android:textSize="18sp"
                     android:textStyle="bold" />
+
             </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/btn_remove_food_cart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                app:srcCompat="@drawable/baseline_close_24" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:backgroundTint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/btn_minus_cart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    app:srcCompat="@drawable/baseline_remove_24" />
-
                 <TextView
-                    android:id="@+id/txt_quanty_cart"
+                    android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:text="1"
-                    android:textSize="20sp"
+                    android:text="Tổng tiền: "
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
-                 <ImageButton
-                    android:id="@+id/btn_add_cart"
+                <TextView
+                    android:id="@+id/txt_order_detail_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@null"
-                    app:srcCompat="@drawable/baseline_add_24" />
+                    android:text="50000 VND"
+                    android:textAlignment="viewStart"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>

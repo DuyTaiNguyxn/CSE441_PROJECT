@@ -30,7 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     // Khai báo giao diện
     private FrameLayout fragmentContainerView;
     private BottomNavigationView bottomNavigationView;
-    private ImageButton btn_back_Topnav; // Nút back
+    private ImageButton btn_back_Topnav,btn_view_order_detail; // Nút back
     private TextView txt_app_name; // Tên ứng dụng
 
 
@@ -46,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         btn_back_Topnav = findViewById(R.id.btn_back_Topnav);
         txt_app_name = findViewById(R.id.txt_app_name);
+        btn_view_order_detail = findViewById(R.id.btn_view_order_detail);
         // Tiêu thụ toàn bộ insets cho BottomNavigationView để tránh tác động lên các view khác
         ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView, (v, insets) -> {
             return WindowInsetsCompat.CONSUMED;
@@ -94,15 +95,14 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             btn_back_Topnav.setVisibility(View.GONE);
         }
+        if (fragment instanceof CartFragment) {
+            txt_app_name.setText("Giỏ hàng");
+            btn_view_order_detail.setVisibility(View.VISIBLE);
+        } else {
+            btn_view_order_detail.setVisibility(View.GONE);
+        }
 
         fragmentTransaction.commit();
     }
 
-    // Thiết lập sự kiện khi nhấn nút back
-    private void setupBackButton() {
-        btn_back_Topnav.setOnClickListener(v -> {
-            // Quay lại màn hình trước đó
-            getSupportFragmentManager().popBackStack();
-        });
-    }
 }

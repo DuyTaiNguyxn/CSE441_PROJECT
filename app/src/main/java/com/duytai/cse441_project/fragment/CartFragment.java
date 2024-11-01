@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.duytai.cse441_project.HomeActivity;
 import com.duytai.cse441_project.R;
 import com.duytai.cse441_project.adapter.CartAdapter;
 import com.duytai.cse441_project.model.CartItem;
@@ -43,6 +46,7 @@ public class CartFragment extends Fragment {
     private SharedPreferences sharedPreferences;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
@@ -54,14 +58,29 @@ public class CartFragment extends Fragment {
         cartAdapter = new CartAdapter(requireContext(), cartItemList, this);
         recyclerView.setAdapter(cartAdapter);
 
+        FragmentActivity fragmentActivity = getActivity();
+        ImageButton btn_OrderView = fragmentActivity.findViewById(R.id.btn_view_order_detail);
+        TextView txt_app_name = fragmentActivity.findViewById(R.id.txt_app_name);
+
         txtTotalPrice = view.findViewById(R.id.txt_total_price);
         txtTempPrice = view.findViewById(R.id.txt_temp_price);
         txtDiscountPrice = view.findViewById(R.id.txt_discount_price);
         txtSelectDiscount = view.findViewById(R.id.txt_select_discount);
-        txtDiscountCode = view.findViewById(R.id.txt_discount_code);
+        txtDiscountCode = view.findViewById(R.id.Txt_order1);
         btnPlaceOrder = view.findViewById(R.id.btn_OrderFood);
 
         loadCartItems();
+        // Đổi tên cho toolbar
+        txt_app_name.setText("Giỏ hàng");
+
+        // Xử lý nút xem chi tiết đơn hàng
+        btn_OrderView.setOnClickListener(v -> {
+            OrderViewFragment orderViewFragment = new OrderViewFragment();
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainerView, orderViewFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         // Xử lý chọn mã giảm giá
         txtSelectDiscount.setOnClickListener(v -> {

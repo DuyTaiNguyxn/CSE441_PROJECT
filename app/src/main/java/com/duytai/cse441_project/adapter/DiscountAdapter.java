@@ -68,7 +68,7 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.ViewHo
 
         public ViewHolder(View itemView) {
             super(itemView);
-            discountCode = itemView.findViewById(R.id.txt_discount_code);
+            discountCode = itemView.findViewById(R.id.Txt_order1);
             discountDescription = itemView.findViewById(R.id.txt_discount_description);
         }
     }
