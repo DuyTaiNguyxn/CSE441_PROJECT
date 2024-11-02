@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -30,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     // Khai báo giao diện
     private FrameLayout fragmentContainerView;
     private BottomNavigationView bottomNavigationView;
-    private ImageButton btn_back_Topnav,btn_view_order_detail; // Nút back
+    private ImageButton btn_back_topNav,btn_view_order_detail; // Nút back
     private TextView txt_app_name; // Tên ứng dụng
 
 
@@ -44,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         // Gán giao diện
         fragmentContainerView = findViewById(R.id.fragmentContainerView);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        btn_back_Topnav = findViewById(R.id.btn_back_Topnav);
+        btn_back_topNav = findViewById(R.id.btn_back_Topnav);
         txt_app_name = findViewById(R.id.txt_app_name);
         btn_view_order_detail = findViewById(R.id.btn_view_order_detail);
         // Tiêu thụ toàn bộ insets cho BottomNavigationView để tránh tác động lên các view khác
@@ -59,11 +58,15 @@ public class HomeActivity extends AppCompatActivity {
                 int Itemid = item.getItemId();
                 if (Itemid == R.id.nav_bottom_home) {
                     loadFragment(new HomeFragment(), false);
+                    txt_app_name.setText("ChickenGang");
                 } else if (Itemid == R.id.nav_bottom_directory) {
+                    txt_app_name.setText("ChickenGang");
                     loadFragment(new CategoryFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_map) {
+                    txt_app_name.setText("ChickenGang");
                     loadFragment(new BookTableFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_cart) {
+
                     loadFragment(new CartFragment(), false);
                 } else {
                     loadFragment(new ProfileFragment(), false);
@@ -90,10 +93,10 @@ public class HomeActivity extends AppCompatActivity {
 
         // Kiểm tra nếu là DetailFragment thì hiển thị nút back
         if (fragment instanceof DetailFoodFragment) {
-            btn_back_Topnav.setVisibility(View.VISIBLE);
+            btn_back_topNav.setVisibility(View.VISIBLE);
             txt_app_name.setText("Chi tiết sản phẩm");
         } else {
-            btn_back_Topnav.setVisibility(View.GONE);
+            btn_back_topNav.setVisibility(View.GONE);
         }
         if (fragment instanceof CartFragment) {
             txt_app_name.setText("Giỏ hàng");
