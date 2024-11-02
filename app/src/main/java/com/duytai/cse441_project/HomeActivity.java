@@ -60,15 +60,16 @@ public class HomeActivity extends AppCompatActivity {
                     loadFragment(new HomeFragment(), false);
                     txt_app_name.setText("ChickenGang");
                 } else if (Itemid == R.id.nav_bottom_directory) {
-                    txt_app_name.setText("ChickenGang");
+                    txt_app_name.setText("Danh mục");
                     loadFragment(new CategoryFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_map) {
-                    txt_app_name.setText("ChickenGang");
+                    txt_app_name.setText("Đặt bàn");
                     loadFragment(new BookTableFragment(), false);
                 } else if (Itemid == R.id.nav_bottom_cart) {
-
+                    txt_app_name.setText("Giỏ hàng");
                     loadFragment(new CartFragment(), false);
                 } else {
+                    txt_app_name.setText("Thông tin cá nhân");
                     loadFragment(new ProfileFragment(), false);
                 }
                 return true;
@@ -94,12 +95,11 @@ public class HomeActivity extends AppCompatActivity {
         // Kiểm tra nếu là DetailFragment thì hiển thị nút back
         if (fragment instanceof DetailFoodFragment) {
             btn_back_topNav.setVisibility(View.VISIBLE);
-            txt_app_name.setText("Chi tiết sản phẩm");
         } else {
             btn_back_topNav.setVisibility(View.GONE);
         }
         if (fragment instanceof CartFragment) {
-            txt_app_name.setText("Giỏ hàng");
+
             btn_view_order_detail.setVisibility(View.VISIBLE);
         } else {
             btn_view_order_detail.setVisibility(View.GONE);

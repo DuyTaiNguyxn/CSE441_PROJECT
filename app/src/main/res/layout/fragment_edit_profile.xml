@@ -15,16 +15,17 @@
         <!-- Ảnh đại diện -->
         <ImageView
             android:id="@+id/iv_user_avatar"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="177dp"
+            android:layout_height="137dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/baseline_person_24" />
 
         <!-- Họ tên người dùng -->
         <TextView
+            android:id="@+id/hoten"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:text="Họ tên"
             android:textSize="14sp"
             android:textColor="#121212" />
@@ -45,8 +46,9 @@
             android:text="Số điện thoại"
             android:textSize="14sp"
             android:textColor="#121212" />
-        <EditText
-            android:id="@+id/et_user_phone"
+
+        <TextView
+            android:id="@+id/tv_user_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -54,6 +56,13 @@
             android:textColor="#000000"
             android:textSize="16sp"
             android:inputType="phone" />
+
+        <!-- Thêm đường gạch ngang dưới TextView -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#121212" />
+
 
         <!-- Địa chỉ -->
         <TextView
@@ -101,7 +110,7 @@
             android:layout_marginTop="16dp" />
 
         <EditText
-            android:id="@+id/et_user_password"
+            android:id="@+id/et_user_new_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -120,7 +129,7 @@
             android:layout_marginTop="16dp" />
 
         <EditText
-            android:id="@+id/et_user_password_confirm"
+            android:id="@+id/et_user_new_password_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

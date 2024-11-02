@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,15 +18,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.duytai.cse441_project.MainActivity;
 import com.duytai.cse441_project.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
@@ -32,6 +36,11 @@ public class ProfileFragment extends Fragment {
     private ImageView ivUserAvatar;
     private Button btnEditInfo, btnLogOut;
     private SharedPreferences sharedPreferences;
+    private FrameLayout fragmentContainerView;
+    private BottomNavigationView bottomNavigationView;
+    private ImageButton btn_back_Topnav,btn_view_order_detail; // Nút back
+    private TextView txt_app_name; // Tên ứng dụng
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,13 +48,7 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         // Khởi tạo các view
-        tvUserName = view.findViewById(R.id.tv_user_name);
-        tvUserPhone = view.findViewById(R.id.tv_user_phone);
-        tvUserAddress = view.findViewById(R.id.tv_user_address);
-        tvUserPassword = view.findViewById(R.id.tv_user_password);
-        ivUserAvatar = view.findViewById(R.id.iv_user_avatar);
-        btnEditInfo = view.findViewById(R.id.btn_edit_info);
-        btnLogOut = view.findViewById(R.id.btn_log_out);
+        initializeViews(view);
 
         // Lấy SharedPreferences để truy xuất userId
         sharedPreferences = requireActivity().getSharedPreferences("currentUserId", MODE_PRIVATE);
@@ -60,9 +63,44 @@ public class ProfileFragment extends Fragment {
 
         // Xử lý sự kiện khi nhấn nút đăng xuất
         btnLogOut.setOnClickListener(view1 -> showLogoutConfirmation());
+        btnEditInfo.setOnClickListener(view12 -> loadEditor(new EditProfileFragment(), false));
 
         return view;
     }
+
+    private void initializeViews(View view) {
+        tvUserName = view.findViewById(R.id.tv_user_name);
+        tvUserPhone = view.findViewById(R.id.tv_user_phone);
+        tvUserAddress = view.findViewById(R.id.tv_user_address);
+        //tvUserPassword = view.findViewById(R.id.tv_user_password);
+        //ivUserAvatar = view.findViewById(R.id.iv_user_avatar);
+        btnEditInfo = view.findViewById(R.id.btn_edit_info);
+        btnLogOut = view.findViewById(R.id.btn_log_out);
+    }
+
+    private void loadEditor(Fragment fragment, boolean isAppInitialized) {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Cập nhật tiêu đề ứng dụng
+        if (fragment instanceof EditProfileFragment) {
+            requireActivity().setTitle("Cập nhật thông tin cá nhân!");
+        } else {
+            requireActivity().setTitle("Thông tin cá nhân!");
+        }
+
+
+        // Thay thế hoặc thêm fragment trong FrameLayout với ID container của nó
+        if (isAppInitialized) {
+            fragmentTransaction.add(R.id.fragmentContainerView, fragment);
+        } else {
+            fragmentTransaction.replace(R.id.fragmentContainerView, fragment);
+        }
+
+        fragmentTransaction.addToBackStack(null); // Thêm vào back stack
+        fragmentTransaction.commit();
+    }
+
 
     // Phương thức để tải thông tin người dùng từ Firebase
     private void loadUserProfile(int userId) {
@@ -76,26 +114,10 @@ public class ProfileFragment extends Fragment {
                     String userName = snapshot.child("name").getValue(String.class);
                     String userPhone = snapshot.child("phone").getValue(String.class);
                     String userAddress = snapshot.child("address").getValue(String.class);
-                    String userPassword = snapshot.child("password").getValue(String.class);
-                    String userAvatarUrl = snapshot.child("avatar_img_url").getValue(String.class);
+                    //String userAvatarUrl = snapshot.child("avatar_img_url").getValue(String.class);
 
                     // Cập nhật thông tin lên giao diện
-                    tvUserName.setText(userName);
-                    tvUserPhone.setText(userPhone);
-                    tvUserAddress.setText(userAddress);
-                    tvUserPassword.setText("••••••••"); // Không hiển thị mật khẩu
-
-                    // Sử dụng Picasso để tải hình ảnh từ URL
-                    if (userAvatarUrl != null) {
-                        Picasso.get()
-                                .load(userAvatarUrl) // Tải hình ảnh từ URL
-                                .placeholder(R.drawable.baseline_person_24) // Hình ảnh thay thế
-                                .error(R.drawable.baseline_person_24) // Hình ảnh lỗi
-                                .into(ivUserAvatar); // Đặt hình ảnh vào ImageView
-                    } else {
-                        ivUserAvatar.setImageResource(R.drawable.baseline_person_24); // Hình ảnh mặc định nếu không có URL
-                    }
-
+                    updateUserInfo(userName, userPhone, userAddress);
                 } else {
                     Toast.makeText(getActivity(), "Không tìm thấy thông tin người dùng", Toast.LENGTH_SHORT).show();
                 }
@@ -106,6 +128,24 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "Lỗi kết nối đến Firebase", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateUserInfo(String userName, String userPhone, String userAddress) {
+        tvUserName.setText(userName);
+        tvUserPhone.setText(userPhone);
+        tvUserAddress.setText(userAddress);
+//        tvUserPassword.setText("••••••••"); // Không hiển thị mật khẩu
+
+        // Sử dụng Picasso để tải hình ảnh từ URL
+//        if (userAvatarUrl != null) {
+//            Picasso.get()
+//                    .load(userAvatarUrl) // Tải hình ảnh từ URL
+//                    .placeholder(R.drawable.baseline_person_24) // Hình ảnh thay thế
+//                    .error(R.drawable.baseline_person_24) // Hình ảnh lỗi
+//                    .into(ivUserAvatar); // Đặt hình ảnh vào ImageView
+//        } else {
+//            ivUserAvatar.setImageResource(R.drawable.baseline_person_24); // Hình ảnh mặc định nếu không có URL
+//        }
     }
 
     // Hiển thị hộp thoại xác nhận đăng xuất
