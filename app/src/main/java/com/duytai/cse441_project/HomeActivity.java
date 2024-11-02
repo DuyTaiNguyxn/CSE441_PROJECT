@@ -95,7 +95,6 @@ public class HomeActivity extends AppCompatActivity {
         // Kiểm tra nếu là DetailFragment thì hiển thị nút back
         if (fragment instanceof DetailFoodFragment) {
             btn_back_topNav.setVisibility(View.VISIBLE);
-
         } else {
             btn_back_topNav.setVisibility(View.GONE);
         }

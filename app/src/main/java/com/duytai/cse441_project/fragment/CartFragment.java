@@ -70,8 +70,6 @@ public class CartFragment extends Fragment {
         btnPlaceOrder = view.findViewById(R.id.btn_OrderFood);
 
         loadCartItems();
-        // Đổi tên cho toolbar
-        txt_app_name.setText("Giỏ hàng");
 
         // Xử lý nút xem chi tiết đơn hàng
         btn_OrderView.setOnClickListener(v -> {
