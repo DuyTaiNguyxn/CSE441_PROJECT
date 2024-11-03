@@ -1,6 +1,7 @@
 package com.duytai.cse441_project.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class DetailFoodFragment extends Fragment {
     ImageButton btn_minus_detai, btn_add_detail;
     Button btnAddToCart;
     private Context context;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,8 +107,9 @@ public class DetailFoodFragment extends Fragment {
                 if (txtQuantity != null && !txtQuantity.getText().toString().isEmpty()) {
                     int quantity = Integer.parseInt(txtQuantity.getText().toString());
                     if (quantity > 0) {
-                        // Kiểm tra userId và foodId từ dữ liệu người dùng và sản phẩm hiện tại
-                        int userId = 0; // Hàm giả lập lấy userId từ phiên đăng nhập
+                        // Lấy userId từ SharedPreferences
+                        sharedPreferences = requireContext().getSharedPreferences("currentUserId", Context.MODE_PRIVATE);
+                        int userId = sharedPreferences.getInt("userId", -1);
                         int foodId = food.getFoodId();
 
                         // Thêm vào giỏ hàng
@@ -201,17 +204,23 @@ public class DetailFoodFragment extends Fragment {
                         cartItemId = currentItemId;
                     }
 
-                    // Kiểm tra nếu món ăn đã có
+                    // Kiểm tra foodId và CartId, nếu món ăn đã có trong giỏ hàng thì tiến hành tăng số lượng sản phẩm trong CartItem
                     if (itemSnapshot.child("foodId").getValue(Integer.class) == foodId) {
                         itemExists = true;
-                        Toast.makeText(requireContext(), "Đã có sản phẩm trong giỏ hàng. Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
-                        int existingQuantity = itemSnapshot.child("quantity").getValue(Integer.class);
-                        // Tăng số lượng
-                        itemSnapshot.getRef().child("quantity").setValue(existingQuantity + quantity);
-                        return;
+                        int currentQuantity = itemSnapshot.child("quantity").getValue(Integer.class);
+                        int newQuantity = currentQuantity + quantity;
+                        cartItemRef.child(String.valueOf(currentItemId)).child("quantity").setValue(newQuantity)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(requireContext(), "Đã tồn tại sản phẩm trong giỏ hàng. Số lượng đã được cập nhật!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(requireContext(), "Thêm món ăn vào giỏ thất bại!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                        break;
                     }
-                }
 
+                }
                 // Nếu món ăn chưa có trong giỏ, thêm mới
                 if (!itemExists) {
                     cartItemId++; // Tăng cartItemId lên 1
