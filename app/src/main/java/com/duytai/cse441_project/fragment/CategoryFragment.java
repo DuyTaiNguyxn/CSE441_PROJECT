@@ -37,6 +37,7 @@
         private List<Category> categoryList;
         private List<Food> foodList;
         private boolean isSearching = false;
+        private EditText searchEditText;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,11 +62,11 @@
             foodList = new ArrayList<>();
             foodAdapter = new FoodAdapter(getContext(), foodList);
             recyclerFood.setAdapter(foodAdapter);
+            searchEditText = view.findViewById(R.id.search_edit_text);
 
             ImageButton imgBt_search = view.findViewById(R.id.search_icon);
             imgBt_search.setOnClickListener(v -> {
-                EditText search = view.findViewById(R.id.search_edit_text);
-                String keyword = search.getText().toString().trim();
+                String keyword = searchEditText.getText().toString().trim();
                 if (!keyword.isEmpty()) {
                     searchFoodByKeyword(keyword);
                 }
@@ -77,6 +78,7 @@
                 String search = bundle.getString("search");
                 if (search != null && !search.isEmpty()) {
                     isSearching = true; // Đặt cờ tìm kiếm
+                    searchEditText.setText(search); // Hiển thị từ khóa tìm kiếm
                     searchFoodByKeyword(search); // Tìm kiếm món ăn theo từ khóa
                 }
             }
@@ -126,6 +128,7 @@
                             foodList.add(foodItem);
                         }
                     }
+                    searchEditText.setText(""); // Xóa từ khóa tìm kiếm khi chọn danh mục
                     displayProducts(foodList);
                 }
 
