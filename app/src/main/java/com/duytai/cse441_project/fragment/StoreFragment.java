@@ -1,6 +1,8 @@
 package com.duytai.cse441_project.fragment;
 
+import android.net.ParseException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +25,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,25 +53,49 @@ public class StoreFragment extends Fragment {
         storeAdapter = new StoreAdapter(storeList, new StoreAdapter.OnBookButtonClickListener() {
             @Override
             public void onBookButtonClick(Store store) {
-                if(store.getAvailableTables() == 0) {
+                if (store.getAvailableTables() == 0) {
                     Toast.makeText(getActivity(), "Cơ sở đã hết bàn trống.", Toast.LENGTH_LONG).show();
                 } else {
-                    // Tạo một instance của TableBookingFragment
-                    TableBookingFragment tableBookingFragment = new TableBookingFragment();
+                    try {
+                        // Lấy thời gian hiện tại dưới dạng chuỗi chỉ chứa giờ và phút
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                        String currentTimeString = sdf.format(Calendar.getInstance().getTime());
+                        Date currentTime = sdf.parse(currentTimeString);
 
-                    // Truyền dữ liệu
-                    Bundle bundle = new Bundle();
-                    // Thay thế với dữ liệu mà bạn cần
-                    bundle.putSerializable("storeData", (Serializable) store);
-                    bundle.putSerializable("availableTableData", store.getAvailableTableInfoList());
+                        // Phân tích chuỗi giờ mở và đóng cửa thành Date
+                        String openingHours = store.getOpeningHours();
+                        String[] hours = openingHours.split(" - ");
+                        Date openingTime = sdf.parse(hours[0]);
+                        Date closingTime = sdf.parse(hours[1]);
 
-                    tableBookingFragment.setArguments(bundle);
+                        // So sánh thời gian
+                        if (currentTime.before(openingTime)) {
+                            Toast.makeText(getActivity(), "Cơ sở hiện chưa mở cửa.", Toast.LENGTH_LONG).show();
+                        } else if (currentTime.after(closingTime)) {
+                            Toast.makeText(getActivity(), "Cơ sở hiện đã đóng cửa.", Toast.LENGTH_LONG).show();
+                        } else {
+                            // Tạo một instance của TableBookingFragment
+                            TableBookingFragment tableBookingFragment = new TableBookingFragment();
 
-                    // Thực hiện điều hướng đến ReservationFragment
-                    requireActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragmentContainerView, tableBookingFragment) // Thay thế R.id.fragment_container với ID của container chứa fragments
-                            .addToBackStack(null) // Thêm vào back stack để có thể quay lại
-                            .commit();
+                            // Truyền dữ liệu
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("storeData", (Serializable) store);
+                            bundle.putSerializable("availableTableData", store.getAvailableTableInfoList());
+
+                            tableBookingFragment.setArguments(bundle);
+
+                            // Thực hiện điều hướng đến ReservationFragment
+                            requireActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragmentContainerView, tableBookingFragment)
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Lỗi phân tích giờ mở cửa.", Toast.LENGTH_SHORT).show();
+                    } catch (java.text.ParseException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         });
