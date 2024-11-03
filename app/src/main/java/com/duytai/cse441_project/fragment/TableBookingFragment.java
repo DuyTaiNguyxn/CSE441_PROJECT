@@ -76,12 +76,14 @@ public class TableBookingFragment extends Fragment {
         LinearLayoutManager tableLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rcvTable.setLayoutManager(tableLayoutManager);
 
-        Store storeData = null;
+        Store storeData;
         ArrayList<TableInfo> availableTableList = null;
         // Nhận dữ liệu từ bundle
         if (getArguments() != null) {
             storeData = (Store) getArguments().getSerializable("storeData");
             availableTableList = (ArrayList<TableInfo>) getArguments().getSerializable("availableTableData");
+        } else {
+            storeData = null;
         }
         tableBookingAdapter = new TableBookingAdapter(getContext(), availableTableList, this);
         rcvTable.setAdapter(tableBookingAdapter);
@@ -114,7 +116,9 @@ public class TableBookingFragment extends Fragment {
 
             // Kiểm tra xem ngày và giờ có hợp lệ không
             if (!isDateTimeValid(reservationDateTime)) {
-                Toast.makeText(getContext(), "Ngày giờ không hợp lệ!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ngày/giờ không hợp lệ!", Toast.LENGTH_SHORT).show();
+            } else if (isOutOfOpeningHours(storeData, time)) {
+                Toast.makeText(getContext(), "Giờ đã chọn nằm ngoài giờ mở cửa.", Toast.LENGTH_SHORT).show();
             } else {
                 // Lấy reservationId lớn nhất từ Firebase
                 getMaxReservationId(maxId -> {
@@ -245,4 +249,29 @@ public class TableBookingFragment extends Fragment {
         }
     }
 
+    private boolean isOutOfOpeningHours(Store store, String time) {
+
+        // Lấy giờ mở cửa từ store
+        String openingHours = store.getOpeningHours();
+        String[] hours = openingHours.split(" - ");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+        try {
+            Date reservationTime = timeFormat.parse(time);
+            Date openingTime = timeFormat.parse(hours[0]);
+            Date closingTime = timeFormat.parse(hours[1]);
+
+            // Kiểm tra nếu thời gian đặt bàn nằm ngoài giờ mở cửa
+            if (reservationTime.before(openingTime) || reservationTime.after(closingTime)) {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Định dạng giờ không hợp lệ!", Toast.LENGTH_SHORT).show();
+            return false;
+        } catch (java.text.ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 }
