@@ -196,13 +196,21 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                         maxCartItemId = currentCartItemId;
                     }
 
-                    // Kiểm tra nếu cả cartId và foodId trùng nhau trong CartItem
+                    // Kiểm tra nếu cả cartId và foodId trùng nhau trong CartItem thì tăng số lượng
                     if (currentCartId != null && currentFoodId != null && currentCartId == cartId && currentFoodId == foodId) {
                         itemExists = true;
-                        int quantity = itemSnapshot.child("quantity").getValue(Integer.class);
-                        itemSnapshot.getRef().child("quantity").setValue(quantity + 1); // Tăng số lượng cho CartItem đã tồn tại
-                        Toast.makeText(context, "Đã có sản phẩm trong giỏ hàng. Đã cập nhật số lượng", Toast.LENGTH_SHORT).show();
-                        break;
+                        int currentQuantity = itemSnapshot.child("quantity").getValue(Integer.class);
+                        int newQuantity = currentQuantity + 1;
+
+                        // Cập nhật số lượng mới vào database
+                        cartItemRef.child(String.valueOf(currentCartItemId)).child("quantity").setValue(newQuantity)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(context, "Thêm sản phẩm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "Thêm sản phẩm vào giỏ hàng thất bại", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     }
                 }
 
