@@ -32,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView tvUserName, tvUserPhone, tvUserAddress, tvUserPassword;
+    private TextView tvUserName, tvUserPhone, tvUserAddress, tvUserEmail;
     private ImageView ivUserAvatar;
     private Button btnEditInfo, btnLogOut;
     private SharedPreferences sharedPreferences;
@@ -73,7 +73,7 @@ public class ProfileFragment extends Fragment {
         tvUserPhone = view.findViewById(R.id.tv_user_phone);
         tvUserAddress = view.findViewById(R.id.tv_user_address);
         //tvUserPassword = view.findViewById(R.id.tv_user_password);
-        //ivUserAvatar = view.findViewById(R.id.iv_user_avatar);
+        tvUserEmail = view.findViewById(R.id.tv_user_email);
         btnEditInfo = view.findViewById(R.id.btn_edit_info);
         btnLogOut = view.findViewById(R.id.btn_log_out);
     }
@@ -114,10 +114,10 @@ public class ProfileFragment extends Fragment {
                     String userName = snapshot.child("name").getValue(String.class);
                     String userPhone = snapshot.child("phone").getValue(String.class);
                     String userAddress = snapshot.child("address").getValue(String.class);
-                    //String userAvatarUrl = snapshot.child("avatar_img_url").getValue(String.class);
+                    String userEmail = snapshot.child("email").getValue(String.class);
 
                     // Cập nhật thông tin lên giao diện
-                    updateUserInfo(userName, userPhone, userAddress);
+                    updateUserInfo(userName, userPhone, userAddress,userEmail);
                 } else {
                     Toast.makeText(getActivity(), "Không tìm thấy thông tin người dùng", Toast.LENGTH_SHORT).show();
                 }
@@ -130,11 +130,11 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void updateUserInfo(String userName, String userPhone, String userAddress) {
+    private void updateUserInfo(String userName, String userPhone, String userAddress, String userEmail) {
         tvUserName.setText(userName);
         tvUserPhone.setText(userPhone);
         tvUserAddress.setText(userAddress);
-//        tvUserPassword.setText("••••••••"); // Không hiển thị mật khẩu
+        tvUserEmail.setText(userEmail);
 
         // Sử dụng Picasso để tải hình ảnh từ URL
 //        if (userAvatarUrl != null) {

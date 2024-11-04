@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        boolean isValid = true;
-
         // Lấy SharedPreferences để lưu userId của người dùng hiện tại
         sharedPreferences = getSharedPreferences("currentUserId", MODE_PRIVATE);
 
@@ -54,43 +52,24 @@ public class MainActivity extends AppCompatActivity {
         tvPasswordError = findViewById(R.id.tv_password_error);
         Button btnRegister = findViewById(R.id.btn_register);
 
-        //sự kiện khởi chạy RegisterActivity khi nhấn btn đăng kí
+        // sự kiện khởi chạy RegisterActivity khi nhấn btn đăng kí
         btnRegister.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
-
-
 
         // Thiết lập lắng nghe sự kiện nhấn nút đăng nhập
         btn_login.setOnClickListener(v -> {
             phoneNumber = etPhoneNumber.getText().toString().trim();
             password = etPassword.getText().toString().trim();
 
-            // Kiểm tra nếu thông tin đăng nhập hợp lệ thì thực hiện xác minh với Firebase
+            // Kiểm tra tính hợp lệ đầu vào và hiển thị lỗi nếu có
+
+            // Nếu thông tin đăng nhập hợp lệ thì thực hiện xác minh với Firebase
             if (validateLogin()) {
                 verifyCredentials(phoneNumber, password);
             }
         });
-
-        // Đặt TextWatcher cho số điện thoại và mật khẩu để kiểm tra tính hợp lệ
-        if (TextUtils.isEmpty(etPhoneNumber.getText().toString())) {
-            tvPhoneError.setText("Vui lòng nhập số điện thoại");
-            tvPhoneError.setVisibility(View.VISIBLE);
-            isValid = false;
-        } else {
-            tvPhoneError.setVisibility(View.GONE);
-        }
-
-        etPhoneNumber.addTextChangedListener(new SimpleTextWatcher(etPhoneNumber, tvPhoneError));
-        if (TextUtils.isEmpty(etPassword.getText().toString())) {
-            tvPasswordError.setText("Vui lòng nhập mật khẩu");
-            tvPasswordError.setVisibility(View.VISIBLE);
-            isValid = false;
-        } else {
-            tvPasswordError.setVisibility(View.GONE);
-        }
-        etPassword.addTextChangedListener(new SimpleTextWatcher(etPassword, tvPasswordError));
     }
 
     // Phương thức xác minh tài khoản và mật khẩu từ Firebase
@@ -101,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         usersRef.orderByChild("phone").equalTo(phoneNumber).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean loginSuccessful = false; // Biến cờ để theo dõi trạng thái đăng nhập
+
                 if (snapshot.exists()) {
                     for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                         String storedPassword = userSnapshot.child("password").getValue(String.class);
@@ -111,18 +92,24 @@ public class MainActivity extends AppCompatActivity {
                             if (userId != null) {
                                 sharedPreferences.edit().putInt("userId", userId).apply();
 
+                                // Hiển thị thông báo đăng nhập thành công
+                                Toast.makeText(MainActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
                                 // Chuyển sang HomeActivity sau khi đăng nhập thành công
                                 Intent intent_login = new Intent(MainActivity.this, HomeActivity.class);
                                 startActivity(intent_login);
                                 finish();
+                                loginSuccessful = true; // Đánh dấu đăng nhập thành công
                             } else {
                                 Toast.makeText(MainActivity.this, "Không tìm thấy userID", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            // Thông báo lỗi nếu mật khẩu không đúng
-                            tvPasswordError.setText("Sai mật khẩu");
-                            tvPasswordError.setVisibility(View.VISIBLE);
                         }
+                    }
+
+                    if (!loginSuccessful) {
+                        // Nếu không tìm thấy mật khẩu đúng
+                        tvPasswordError.setText("Sai mật khẩu");
+                        tvPasswordError.setVisibility(View.VISIBLE);
                     }
                 } else {
                     // Thông báo lỗi nếu số điện thoại không tồn tại
@@ -130,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
                     tvPhoneError.setVisibility(View.VISIBLE);
                 }
             }
-
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -141,8 +126,39 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Phương thức kiểm tra nếu không có lỗi (tức là tất cả thông tin hợp lệ)
+
+
+    // Phương thức kiểm tra tính hợp lệ của thông tin đăng nhập
     private boolean validateLogin() {
-        return tvPhoneError.getVisibility() == View.GONE && tvPasswordError.getVisibility() == View.GONE;
+        boolean isValid = true;
+
+        // Kiểm tra số điện thoại không trống, có ít nhất 8 chữ số, và không chứa ký tự đặc biệt
+        if (TextUtils.isEmpty(phoneNumber)) {
+            tvPhoneError.setText("Vui lòng nhập số điện thoại");
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!phoneNumber.matches("^[0-9]+$")) {
+            tvPhoneError.setText("Số điện thoại chỉ được chứa chữ số");
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        }else if (!phoneNumber.matches("^\\d{10}$")) {
+            tvPhoneError.setText("Số điện thoại phải có đủ 10 số");
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPhoneError.setVisibility(View.GONE);
+        }
+
+        // Kiểm tra mật khẩu không trống
+        if (TextUtils.isEmpty(password)) {
+            tvPasswordError.setText("Vui lòng nhập mật khẩu");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPasswordError.setVisibility(View.GONE);
+        }
+
+        return isValid;
     }
+
 }
