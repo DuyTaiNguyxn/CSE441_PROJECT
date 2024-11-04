@@ -120,6 +120,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         cartItemRef.child("quantity").setValue(newQuantity).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 cartItem.setQuantity(newQuantity);
+                Toast.makeText(context, "Cập nhật thành công.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -131,6 +132,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             if (task.isSuccessful()) {
                 cartItemList.remove(cartItem);
                 notifyDataSetChanged();
+                Toast.makeText(context, "Xóa thành công.", Toast.LENGTH_SHORT).show();
             }
         });
     }
