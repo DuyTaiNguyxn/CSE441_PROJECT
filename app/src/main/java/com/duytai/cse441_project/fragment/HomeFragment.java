@@ -159,9 +159,14 @@ public class HomeFragment extends Fragment {
                                         topSaleList.add(foodItem);
                                     }
 
-                                    if (newFoodCount < 10) { // Chỉ thêm tối đa 10 món mới
-                                        newFoodList.add(foodItem); // Thêm vào danh sách món mới
-                                        newFoodCount++; // Tăng biến đếm
+                                    // Cập nhật danh sách món mới nhất bằng cách lấy ra 10 món có Id lớn nhất
+                                    int totalItems = (int) foodSnapshot.getChildrenCount();
+                                    // Lặp từ phần tử có ID lớn nhất đến 10 phần tử gần nhất
+                                    while (newFoodCount < 10 && totalItems > 0) {
+                                        Food newFoodItem = foodSnapshot.child(String.valueOf(totalItems - 1)).getValue(Food.class);
+                                        newFoodList.add(newFoodItem);
+                                        newFoodCount++;
+                                        totalItems--;
                                     }
 
                                     // Kiểm tra danh mục (categoryId) để thêm vào danh sách combo
