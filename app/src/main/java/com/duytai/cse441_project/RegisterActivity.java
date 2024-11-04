@@ -3,6 +3,7 @@ package com.duytai.cse441_project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,8 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText etFullName, etPhoneNumber, etAddress, etPassword, etConfirmPassword;
-    TextView tvFullNameError, tvPhoneError, tvAddressError, tvPasswordError, tvConfirmPasswordError;
+    EditText etEmail, etFullName, etPhoneNumber, etAddress, etPassword, etConfirmPassword;
+    TextView tvEmailError, tvFullNameError, tvPhoneError, tvAddressError, tvPasswordError, tvConfirmPasswordError;
     Button btnRegister;
     DatabaseReference databaseReference;
 
@@ -31,97 +32,165 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Liên kết các view với biến
+        // Link views to variables
         etFullName = findViewById(R.id.et_full_name);
         etPhoneNumber = findViewById(R.id.et_phone_number);
         etAddress = findViewById(R.id.et_address);
         etPassword = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
+        etEmail = findViewById(R.id.et_email);
 
         tvFullNameError = findViewById(R.id.tv_full_name_error);
         tvPhoneError = findViewById(R.id.tv_phone_error);
         tvAddressError = findViewById(R.id.tv_address_error);
         tvPasswordError = findViewById(R.id.tv_password_error);
         tvConfirmPasswordError = findViewById(R.id.tv_confirm_password_error);
+        tvEmailError = findViewById(R.id.tv_email_error);
 
         btnRegister = findViewById(R.id.btn_register);
         databaseReference = FirebaseDatabase.getInstance().getReference("User");
 
         btnRegister.setOnClickListener(v -> {
             if (validateRegister()) {
-                registerUser();
+                // Move the phone number check to validateRegister() for async handling
+                String phoneNumber = etPhoneNumber.getText().toString().trim();
+                checkPhoneNumberInDatabase(phoneNumber);
             }
         });
 
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(v -> finish());
-
-        etPhoneNumber.addTextChangedListener(new SimpleTextWatcher(etPhoneNumber, tvPhoneError));
-        etPassword.addTextChangedListener(new SimpleTextWatcher(etPassword, tvPasswordError));
     }
 
     private boolean validateRegister() {
         boolean isValid = true;
-
-        // Kiểm tra họ tên
-        if (TextUtils.isEmpty(etFullName.getText().toString())) {
+        // Validate full name
+        String fullName = etFullName.getText().toString().trim();
+        if (TextUtils.isEmpty(fullName)) {
             tvFullNameError.setText("Vui lòng nhập họ tên");
             tvFullNameError.setVisibility(View.VISIBLE);
             isValid = false;
+        } else if (!fullName.matches("^[a-zA-Z\\s]+$")) {
+            tvFullNameError.setText("Họ tên không được chứa số hoặc ký tự đặc biệt");
+            tvFullNameError.setVisibility(View.VISIBLE);
+            isValid = false;
         } else {
-            tvFullNameError.setVisibility(View.GONE);
+            tvFullNameError.setVisibility(View.INVISIBLE);
         }
 
-        // Kiểm tra số điện thoại
-        if (TextUtils.isEmpty(etPhoneNumber.getText().toString())) {
+        // Validate phone number
+        String phoneNumber = etPhoneNumber.getText().toString().trim();
+        if (TextUtils.isEmpty(phoneNumber)) {
             tvPhoneError.setText("Vui lòng nhập số điện thoại");
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!phoneNumber.matches("^\\d{10}$")) {
+            tvPhoneError.setText("Số điện thoại chỉ chứa số và phải đủ 10 số");
             tvPhoneError.setVisibility(View.VISIBLE);
             isValid = false;
         } else {
             tvPhoneError.setVisibility(View.GONE);
+           // checkPhoneNumberInDatabase(phoneNumber); // Call the method without passing isValid
         }
-        etPhoneNumber.addTextChangedListener(new SimpleTextWatcher(etPhoneNumber, tvPhoneError));
 
-
-        // Kiểm tra địa chỉ
-        if (TextUtils.isEmpty(etAddress.getText().toString())) {
-            tvAddressError.setText("Vui lòng nhập địa chỉ");
-            tvAddressError.setVisibility(View.VISIBLE);
+        // Validate email
+        String email = etEmail.getText().toString().trim();
+        if (TextUtils.isEmpty(email)) {
+            tvEmailError.setText("Vui lòng nhập email");
+            tvEmailError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            tvEmailError.setText("Định dạng email không hợp lệ");
+            tvEmailError.setVisibility(View.VISIBLE);
             isValid = false;
         } else {
-            tvAddressError.setVisibility(View.GONE);
+            tvEmailError.setVisibility(View.GONE);
         }
 
-        // Kiểm tra mật khẩu
-        if (TextUtils.isEmpty(etPassword.getText().toString())) {
+        // Validate password
+        String password = etPassword.getText().toString().trim();
+        if (TextUtils.isEmpty(password)) {
             tvPasswordError.setText("Vui lòng nhập mật khẩu");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (password.length() < 8) {
+            tvPasswordError.setText("Mật khẩu phải có ít nhất 8 ký tự");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!password.matches(".*[A-Z].*")) {
+            tvPasswordError.setText("Mật khẩu phải chứa ít nhất 1 ký tự in hoa");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!password.matches(".*[a-z].*")) {
+            tvPasswordError.setText("Mật khẩu phải chứa ít nhất 1 ký tự in thường");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!password.matches(".*\\d.*")) {
+            tvPasswordError.setText("Mật khẩu phải chứa ít nhất 1 chữ số");
+            tvPasswordError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (!password.matches(".*[!@#\\$%\\^&*].*")) {
+            tvPasswordError.setText("Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*)");
             tvPasswordError.setVisibility(View.VISIBLE);
             isValid = false;
         } else {
             tvPasswordError.setVisibility(View.GONE);
         }
-        etPassword.addTextChangedListener(new SimpleTextWatcher(etPassword, tvPasswordError));
 
-        // Kiểm tra xác nhận mật khẩu
-        if (!etPassword.getText().toString().equals(etConfirmPassword.getText().toString())) {
-            tvConfirmPasswordError.setText("Mật khẩu xác nhận không khớp");
+        // Confirm password match
+        String confirmPassword = etConfirmPassword.getText().toString().trim();
+        if (!confirmPassword.equals(password)) {
+            tvConfirmPasswordError.setText("Xác nhận mật khẩu không khớp");
             tvConfirmPasswordError.setVisibility(View.VISIBLE);
             isValid = false;
         } else {
             tvConfirmPasswordError.setVisibility(View.GONE);
         }
 
+// Validate address
+        String address = etAddress.getText().toString().trim();
+        if (TextUtils.isEmpty(address)) {
+            tvAddressError.setText("Vui lòng nhập địa chỉ");
+            tvAddressError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else if (address.length() < 5) {
+            tvAddressError.setText("Địa chỉ phải có ít nhất 5 ký tự");
+            tvAddressError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvAddressError.setVisibility(View.GONE);
+        }
+
         return isValid;
     }
 
+    private void checkPhoneNumberInDatabase(String phoneNumber) {
+        databaseReference.orderByChild("phone").equalTo(phoneNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    tvPhoneError.setText("Số điện thoại này đã được đăng ký. Vui lòng sử dụng số điện thoại khác");
+                    tvPhoneError.setVisibility(View.VISIBLE);
+                } else {
+                    tvPhoneError.setVisibility(View.GONE);
+                    registerUser(); // Proceed with registration
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(RegisterActivity.this, "Lỗi kiểm tra số điện thoại: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void registerUser() {
-        // Lấy tất cả người dùng từ Firebase
+        // Fetch all users from Firebase to find maxUserId...
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int maxUserId = 0; // Khởi tạo maxUserId với 0
+                int maxUserId = 0;
 
-                // Duyệt qua tất cả người dùng để tìm userId lớn nhất
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     int currentUserId = snapshot.child("userId").getValue(Integer.class);
                     if (currentUserId > maxUserId) {
@@ -129,27 +198,23 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 }
 
-                // Tạo ID người dùng mới
                 int newUserId = maxUserId + 1;
 
-                // Lấy dữ liệu từ EditText
                 String fullName = etFullName.getText().toString().trim();
                 String phoneNumber = etPhoneNumber.getText().toString().trim();
                 String address = etAddress.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
+                String email = etEmail.getText().toString().trim();
 
-                // Tạo đối tượng User
-               // User newUser = new User(newUserId, fullName, phoneNumber, password, address, "", "customer", "https://storage.googleapis.com/chickengangapp.appspot.com/images/1729358813_gumball.jpg", 0);
-                    User newUser = new User(address, "https://storage.googleapis.com/chickengangapp.appspot.com/images/1729358813_gumball.jpg", "",fullName,password, phoneNumber, 0, "customer", newUserId);
-                // Lưu người dùng mới vào Firebase
+                User newUser = new User(address, "https://storage.googleapis.com/chickengangapp.appspot.com/images/1729358813_gumball.jpg", email, fullName, password, phoneNumber, 0, "customer", newUserId);
+
                 databaseReference.child(String.valueOf(newUserId)).setValue(newUser)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                //Chuyển tới màn hình chính hoặc màn hình đăng nhập
                                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                 startActivity(intent);
-                                finish(); // Đóng activity hiện tại
+                                finish();
                             } else {
                                 Toast.makeText(RegisterActivity.this, "Đăng ký thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
                             }
@@ -162,8 +227,4 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 }
