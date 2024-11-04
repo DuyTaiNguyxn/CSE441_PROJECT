@@ -204,6 +204,21 @@ public class OrderFragment extends Fragment {
         int userId = sharedPreferences.getInt("userId", -1);
         String Status = "Đang xử lý";
         String PaymentMethod = "Tiền mặt";
+        // Kiểm tra thông tin trước khi tạo đơn hàng
+        if (ordername.isEmpty() || Orderphone.isEmpty() || Orderaddress.isEmpty()) {
+            Toast.makeText(getContext(), "Vui lòng nhập đầy đủ thông tin.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (edtPhone.length() != 10) {
+            Toast.makeText(getContext(), "Số điện thoại không hợp lệ.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (Orderaddress.isEmpty()) {
+            Toast.makeText(getContext(), "Vui lòng chọn địa chỉ giao hàng.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         // Tìm ID lớn nhất
         orderRef.orderByKey().limitToLast(1).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
